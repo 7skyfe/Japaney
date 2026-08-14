@@ -25,12 +25,21 @@ function defaultState() {
         label: "✈️ Voyage 1 mois",
         target: 5000,
         startDate: todayISO(),
-        deadline: "2027-05-01",
+        deadline: "2027-05-08", // départ du voyage, cf. state.flights pour le détail des dates
         transactions: [],
       },
     },
     rate: { value: RATE_FALLBACK, date: null, fetchedAt: null, isLive: false },
     activeTab: "japan",
+    flights: {
+      origin: "Paris",
+      originCode: "CDG",
+      destination: "Tokyo Haneda",
+      destinationCode: "HND",
+      depart: "2027-05-08",
+      return: "2027-06-07",
+      entries: [], // { id, loggedDate, price, airline, link }
+    },
   };
 }
 
@@ -48,6 +57,11 @@ function loadState() {
       },
       rate: { ...base.rate, ...parsed.rate },
       activeTab: parsed.activeTab === "other" ? "other" : "japan",
+      flights: {
+        ...base.flights,
+        ...(parsed.flights || {}),
+        entries: (parsed.flights && Array.isArray(parsed.flights.entries)) ? parsed.flights.entries : [],
+      },
     };
   } catch (e) {
     console.warn("État corrompu, réinitialisation.", e);
@@ -359,16 +373,134 @@ function renderTabs() {
   });
 }
 
+/* ----------------------------- Suivi des vols ---------------------------- */
+
+function buildGoogleFlightsUrl(flights) {
+  // Google Flights n'a pas d'API publique : on ouvre une recherche pré-remplie
+  // (langage naturel supporté par le paramètre `q`) filtrée sur "nonstop".
+  const query =
+    `Flights from ${flights.origin} to ${flights.destination} on ${flights.depart} through ${flights.return} nonstop`;
+  return `https://www.google.com/travel/flights?hl=fr&curr=EUR&q=${encodeURIComponent(query)}`;
+}
+
+function wireFlightTracker() {
+  const departInput = document.getElementById("flightDepart");
+  const returnInput = document.getElementById("flightReturn");
+  const form = document.getElementById("flightForm");
+  const priceInput = document.getElementById("flightPrice");
+  const airlineInput = document.getElementById("flightAirline");
+  const linkInput = document.getElementById("flightLink");
+  const list = document.getElementById("flightList");
+
+  departInput.value = state.flights.depart;
+  returnInput.value = state.flights.return;
+
+  departInput.addEventListener("change", () => {
+    if (departInput.value) {
+      state.flights.depart = departInput.value;
+      saveState();
+      renderFlights();
+    }
+  });
+  returnInput.addEventListener("change", () => {
+    if (returnInput.value) {
+      state.flights.return = returnInput.value;
+      saveState();
+      renderFlights();
+    }
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const price = parseFloat(priceInput.value);
+    if (!(price > 0)) return;
+    state.flights.entries.unshift({
+      id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+      loggedDate: todayISO(),
+      price,
+      airline: airlineInput.value.trim(),
+      link: linkInput.value.trim(),
+    });
+    saveState();
+    priceInput.value = "";
+    airlineInput.value = "";
+    linkInput.value = "";
+    renderFlights();
+  });
+
+  list.addEventListener("click", (e) => {
+    const btn = e.target.closest(".flight-item__del");
+    if (!btn) return;
+    state.flights.entries = state.flights.entries.filter((f) => f.id !== btn.dataset.id);
+    saveState();
+    renderFlights();
+  });
+}
+
+function renderFlights() {
+  const flights = state.flights;
+  const nights = Math.max(0, daysBetween(flights.depart, flights.return));
+  document.getElementById("flightNights").textContent = `${nights} nuit${nights > 1 ? "s" : ""}`;
+  document.getElementById("flightGoogleLink").href = buildGoogleFlightsUrl(flights);
+
+  const bestBadge = document.getElementById("flightBest");
+  const list = document.getElementById("flightList");
+  const emptyMsg = document.getElementById("flightEmpty");
+  const sorted = [...flights.entries].sort((a, b) => a.price - b.price);
+  const best = sorted[0];
+  const budget = state.goals.other.target;
+
+  if (best) {
+    bestBadge.textContent = `🏆 Meilleur prix : ${eurFmt.format(best.price)}`;
+    bestBadge.classList.add("has-price");
+  } else {
+    bestBadge.textContent = "Aucun prix enregistré";
+    bestBadge.classList.remove("has-price");
+  }
+
+  list.querySelectorAll(".flight-item").forEach((el) => el.remove());
+
+  if (sorted.length === 0) {
+    emptyMsg.style.display = "block";
+  } else {
+    emptyMsg.style.display = "none";
+    sorted.forEach((entry) => {
+      const isBest = entry.id === best.id;
+      const pctBudget = (entry.price / budget) * 100;
+      const item = document.createElement("div");
+      item.className = "flight-item" + (isBest ? " is-best" : "");
+      item.innerHTML = `
+        <span class="flight-item__badge">${isBest ? "🏆" : "✈️"}</span>
+        <div class="flight-item__body">
+          <div class="flight-item__top">
+            <span class="flight-item__price">${eurFmt.format(entry.price)}</span>
+            <span class="flight-item__date">relevé le ${formatDateFr(entry.loggedDate)}</span>
+          </div>
+          <div class="flight-item__meta">
+            <span>${pctBudget.toFixed(0)}% du budget "${escapeHtml(state.goals.other.label)}"</span>
+            ${entry.airline ? `<span>· ${escapeHtml(entry.airline)}</span>` : ""}
+            ${/^https?:\/\//i.test(entry.link) ? `<a href="${escapeHtml(entry.link)}" target="_blank" rel="noopener noreferrer">Voir l'annonce ↗</a>` : ""}
+          </div>
+        </div>
+        <button type="button" class="flight-item__del" data-id="${entry.id}" aria-label="Supprimer ce prix">✕</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+}
+
 function render() {
   Object.keys(state.goals).forEach(renderCard);
   renderSummary();
   renderTabs();
+  renderFlights();
   setRateBadge();
 }
 
 /* --------------------------------- Init --------------------------------- */
 
 buildCards();
+wireFlightTracker();
 render();
 refreshRate();
 

@@ -470,6 +470,207 @@ main {
   flex: none;
 }
 
+/* ---------- Suivi des vols ---------- */
+.flight-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.flight-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.flight-card__head h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.flight-card__best {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--surface-alt);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.flight-card__best.has-price {
+  background: color-mix(in srgb, var(--good) 18%, transparent);
+  color: var(--good);
+}
+
+.flight-card__dates {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: .82rem;
+  color: var(--text-dim);
+}
+
+.flight-card__dates label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.flight-card__dates input[type="date"] {
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.flight-card__nights {
+  font-weight: 700;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+.flight-card__cta {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  background: var(--info);
+  color: #fff;
+  font-weight: 800;
+  font-size: .92rem;
+  padding: 12px;
+  border-radius: 12px;
+  min-height: 44px;
+}
+
+.flight-card__hint {
+  font-size: .74rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+  margin: 10px 0 4px;
+}
+
+.flight-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+}
+
+.flight-form__price,
+.flight-form__airline,
+.flight-form__link,
+.flight-form__submit {
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-size: .9rem;
+}
+
+.flight-form__link { grid-column: 1 / -1; }
+
+.flight-form__submit {
+  grid-column: 1 / -1;
+  border: none;
+  background: var(--info);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.flight-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flight-list__empty {
+  font-size: .8rem;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 6px 0;
+}
+
+.flight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--surface-alt);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.flight-item.is-best { outline: 2px solid var(--good); }
+
+.flight-item__badge { font-size: 1.1rem; flex: none; margin-top: 1px; }
+
+.flight-item__body { flex: 1; min-width: 0; }
+
+.flight-item__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.flight-item__price { font-weight: 800; font-size: .95rem; }
+.flight-item__date { font-size: .68rem; color: var(--text-dim); white-space: nowrap; }
+
+.flight-item__meta {
+  font-size: .76rem;
+  color: var(--text-dim);
+  margin-top: 2px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.flight-item__meta a { color: var(--info); }
+
+.flight-item__del {
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: .95rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  flex: none;
+}
+
+@media (min-width: 820px) {
+  .flight-form {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "price airline submit"
+      "link  link    link";
+  }
+  .flight-form__price { grid-area: price; }
+  .flight-form__airline { grid-area: airline; }
+  .flight-form__submit { grid-area: submit; }
+  .flight-form__link { grid-area: link; }
+}
+
 .app-footer {
   max-width: 1000px;
   margin: 20px auto 0;

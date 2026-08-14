@@ -46,6 +46,41 @@
   <div class="goals-wrapper" id="goalsWrapper">
     <!-- Les deux cartes objectifs sont injectées ici par app.js -->
   </div>
+
+  <section class="flight-card" aria-label="Suivi des vols Paris → Tokyo">
+    <div class="flight-card__head">
+      <h2>✈️ Vols Paris CDG → Tokyo (Haneda)</h2>
+      <span class="flight-card__best" id="flightBest">Aucun prix enregistré</span>
+    </div>
+
+    <div class="flight-card__dates">
+      <label>Aller <input type="date" id="flightDepart"></label>
+      <label>Retour <input type="date" id="flightReturn"></label>
+      <span class="flight-card__nights" id="flightNights">– nuits</span>
+    </div>
+
+    <a id="flightGoogleLink" class="flight-card__cta" href="#" target="_blank" rel="noopener noreferrer">
+      🔎 Voir les vols sans escale sur Google Flights ↗
+    </a>
+    <p class="flight-card__hint">
+      Vols directs CDG → Haneda (HND) uniquement : Air France, ANA et JAL
+      (≈ 13h55, à partir d'environ 900 € A/R selon la période). Google ne
+      proposant pas d'API publique de prix, le bouton ouvre une recherche
+      Google Flights déjà filtrée sur tes dates — enregistre ensuite le
+      meilleur prix trouvé ci-dessous pour suivre son évolution.
+    </p>
+
+    <form id="flightForm" class="flight-form">
+      <input type="number" id="flightPrice" class="flight-form__price" placeholder="Prix trouvé (€)" inputmode="decimal" min="1" step="1" required>
+      <input type="text" id="flightAirline" class="flight-form__airline" placeholder="Compagnie (ex: Air France)" maxlength="40">
+      <input type="url" id="flightLink" class="flight-form__link" placeholder="Lien de l'annonce (optionnel)">
+      <button type="submit" class="flight-form__submit">Enregistrer ce prix</button>
+    </form>
+
+    <div class="flight-list" id="flightList">
+      <p class="flight-list__empty" id="flightEmpty">Aucun prix enregistré pour l'instant.</p>
+    </div>
+  </section>
 </main>
 
 <template id="goalCardTemplate">

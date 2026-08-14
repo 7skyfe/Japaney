@@ -23,7 +23,7 @@ Aucune installation nécessaire : c'est du HTML/CSS/JS pur, sans dépendance.
 
 - **Deux cagnottes indépendantes**, éditables (nom, montant cible, date
   d'échéance) :
-  - ✈️ *Voyage 1 mois* — 5 000 € par défaut, échéance 01/05/2027.
+  - ✈️ *Voyage 1 mois* — 5 000 € par défaut, du 8 mai au 7 juin 2027.
   - 🇯🇵 *PVT Japon* — 10 000 € par défaut, échéance 01/11/2027 (départ en PVT).
 - **Barre de progression** par objectif, avec pourcentage, statut
   (en avance / dans les temps / en retard / échéance dépassée / atteint) basé
@@ -45,6 +45,18 @@ Aucune installation nécessaire : c'est du HTML/CSS/JS pur, sans dépendance.
 - **Responsive** : navigation par onglets sur mobile (une cagnotte à la fois),
   les deux cagnottes côte à côte automatiquement à partir de 820 px de large
   (tablette/PC).
+- **Suivi des vols Paris CDG → Tokyo Haneda** pour le voyage de mai (dates
+  éditables, 8 mai → 7 juin 2027 par défaut) :
+  - un bouton ouvre une recherche **Google Flights pré-remplie** (dates +
+    filtre "sans escale") — Google ne fournissant pas d'API publique de prix,
+    il n'y a pas de vraie récupération automatique possible depuis une page
+    statique ;
+  - vols directs uniquement disponibles vers **Haneda (HND)**, opérés par Air
+    France, ANA et JAL (≈ 13h55, à partir d'environ 900 € A/R selon la
+    période) ;
+  - un **carnet de prix** permet d'enregistrer chaque prix trouvé (montant,
+    compagnie, lien) pour suivre son évolution dans le temps ; le meilleur
+    prix est mis en avant avec son poids en % du budget "Voyage 1 mois".
 
 ## Structure
 
