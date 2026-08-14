@@ -420,6 +420,7 @@ function wireFlightTracker() {
       price,
       airline: airlineInput.value.trim(),
       link: linkInput.value.trim(),
+      source: "manuel",
     });
     saveState();
     priceInput.value = "";
@@ -459,6 +460,7 @@ function wireFlightTracker() {
           price: raw.price,
           airline: raw.airline || "",
           link: raw.link || "",
+          source: raw.source || "",
         });
         added++;
       });
@@ -472,6 +474,11 @@ function wireFlightTracker() {
       importInput.value = "";
     }
   });
+}
+
+function sourceLabel(source) {
+  const labels = { "fast-flights": "via Google Flights", amadeus: "via Amadeus" };
+  return labels[source] || source;
 }
 
 function renderFlights() {
@@ -516,6 +523,7 @@ function renderFlights() {
           <div class="flight-item__meta">
             <span>${pctBudget.toFixed(0)}% du budget "${escapeHtml(state.goals.other.label)}"</span>
             ${entry.airline ? `<span>· ${escapeHtml(entry.airline)}</span>` : ""}
+            ${entry.source ? `<span>· ${escapeHtml(sourceLabel(entry.source))}</span>` : ""}
             ${/^https?:\/\//i.test(entry.link) ? `<a href="${escapeHtml(entry.link)}" target="_blank" rel="noopener noreferrer">Voir l'annonce ↗</a>` : ""}
           </div>
         </div>

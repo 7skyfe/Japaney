@@ -26,6 +26,11 @@ Chaque exécution :
 Pour automatiser en local (optionnel, à ajouter toi-même), un simple cron
 suffit -- par exemple une fois par jour à 9h, pour ne pas se faire limiter :
     0 9 * * * cd /chemin/vers/Japaney && /usr/bin/python3 track_flights.py >> flight_tracker.log 2>&1
+
+Voir aussi track_flights_amadeus.py : une deuxième source de prix basée sur
+une vraie API officielle (Amadeus for Developers, gratuite avec clé), plus
+stable que ce scraper mais nécessitant une inscription. Les deux scripts
+écrivent dans les mêmes flight_prices.csv / flight_prices.json.
 """
 
 import csv
@@ -127,8 +132,8 @@ def main() -> None:
     with CSV_PATH.open("a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         if is_new_csv:
-            writer.writerow(["timestamp", "price_eur", "airlines", "depart", "return"])
-        writer.writerow([now_iso, best.price, "/".join(best.airlines), DEPART_DATE, RETURN_DATE])
+            writer.writerow(["timestamp", "price_eur", "airlines", "depart", "return", "source"])
+        writer.writerow([now_iso, best.price, "/".join(best.airlines), DEPART_DATE, RETURN_DATE, "fast-flights"])
 
     # 2) export au format attendu par le carnet de prix de l'appli Japaney
     entries = []
@@ -145,6 +150,7 @@ def main() -> None:
             "price": best.price,
             "airline": "/".join(best.airlines),
             "link": google_flights_link(),
+            "source": "fast-flights",
         },
     )
     JSON_PATH.write_text(json.dumps(entries, ensure_ascii=False, indent=2), encoding="utf-8")

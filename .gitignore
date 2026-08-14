@@ -1,4 +1,12 @@
-# Données générées localement par track_flights.py (personnelles, non versionnées)
+# Données générées localement par track_flights.py / track_flights_amadeus.py
+# (personnelles, non versionnées)
 flight_prices.csv
 flight_prices.json
 flight_tracker.log
+
+# Identifiants Amadeus (ne jamais commit une clé API)
+amadeus_credentials.json
+
+# Bytecode Python
+__pycache__/
+*.pyc

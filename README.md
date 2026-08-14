@@ -58,10 +58,23 @@ Aucune installation nécessaire : c'est du HTML/CSS/JS pur, sans dépendance.
     compagnie, lien) pour suivre son évolution dans le temps ; le meilleur
     prix est mis en avant avec son poids en % du budget "Voyage 1 mois" ;
   - un bouton **"Importer flight_prices.json"** charge automatiquement les
-    prix collectés par le script `track_flights.py` (voir ci-dessous), avec
-    déduplication.
+    prix collectés par `track_flights.py` et/ou `track_flights_amadeus.py`
+    (voir ci-dessous), avec déduplication.
 
-## Suivi de prix automatisé en local (optionnel) — `track_flights.py`
+## Suivi de prix automatisé en local (optionnel)
+
+Deux scripts indépendants, qui écrivent tous les deux dans les mêmes
+`flight_prices.csv` / `flight_prices.json` (tu peux utiliser l'un, l'autre,
+ou les deux) :
+
+| | `track_flights.py` | `track_flights_amadeus.py` |
+|---|---|---|
+| Source | Google Flights (indirectement) | API officielle Amadeus |
+| Installation | `pip install -r requirements.txt` | idem + clé gratuite |
+| Stabilité | scraper non officiel, peut casser | API documentée, plus stable |
+| Compte requis | non | oui (gratuit, ~5 min) |
+
+### `track_flights.py` — via fast-flights
 
 Plutôt que de re-développer un scraper Google Flights (aucune API publique
 n'existe), ce dépôt s'appuie sur un outil libre déjà écrit et maintenu :
@@ -97,12 +110,46 @@ ponctuellement (voire une fois par jour via cron), et jamais depuis le
 navigateur (qui ne pourrait de toute façon pas l'appeler directement : CORS
 + absence d'API publique).
 
+### `track_flights_amadeus.py` — via l'API officielle Amadeus
+
+[Amadeus for Developers](https://developers.amadeus.com) propose une vraie
+API REST documentée (Flight Offers Search), avec un accès de test gratuit
+(aucune carte bancaire requise) :
+
+1. Crée un compte sur https://developers.amadeus.com/register puis, dans
+   "My Self-Service Apps", crée une application pour obtenir une **API Key**
+   (client id) et un **API Secret** (client secret).
+2. Renseigne ces identifiants (au choix) :
+   ```bash
+   export AMADEUS_CLIENT_ID="..."
+   export AMADEUS_CLIENT_SECRET="..."
+   ```
+   ou dans un fichier `amadeus_credentials.json` local (jamais commit, déjà
+   dans `.gitignore`) :
+   ```json
+   { "client_id": "...", "client_secret": "..." }
+   ```
+3. Lance :
+   ```bash
+   pip install -r requirements.txt
+   python3 track_flights_amadeus.py
+   ```
+
+Même comportement que `track_flights.py` (recherche CDG ↔ HND sans escale,
+journal CSV, export JSON importable), mais via une API stable plutôt qu'un
+scraper. L'environnement de test Amadeus est gratuit en permanence pour un
+usage personnel raisonnable, mais ses tarifs peuvent avoir un léger
+décalage par rapport au prix affiché en direct sur un site marchand.
+
 ## Structure
 
 ```
-index.html   structure de la page + template de carte "objectif"
-style.css    design mobile-first, thème clair/sombre automatique
-app.js       état, calculs (progression, effort requis, taux de change), rendu
+index.html               structure de la page + template de carte "objectif"
+style.css                design mobile-first, thème clair/sombre automatique
+app.js                   état, calculs (progression, effort requis, taux de change), rendu
+track_flights.py         suivi de prix via fast-flights (Google Flights, sans clé)
+track_flights_amadeus.py suivi de prix via l'API officielle Amadeus (clé gratuite)
+requirements.txt         dépendances Python des deux scripts de suivi
 ```
 
 ## Personnaliser
