@@ -15,14 +15,14 @@ function defaultState() {
   return {
     goals: {
       japan: {
-        label: "🇯🇵 Voyage au Japon",
+        label: "🇯🇵 PVT Japon",
         target: 10000,
         startDate: todayISO(),
-        deadline: "2026-11-01",
+        deadline: "2027-11-01",
         transactions: [],
       },
       other: {
-        label: "✈️ Autre objectif",
+        label: "✈️ Voyage 1 mois",
         target: 5000,
         startDate: todayISO(),
         deadline: "2027-05-01",
