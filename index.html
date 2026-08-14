@@ -70,6 +70,17 @@
       meilleur prix trouvé ci-dessous pour suivre son évolution.
     </p>
 
+    <div class="flight-card__import">
+      <label class="flight-card__import-btn" for="flightImportInput">📂 Importer flight_prices.json</label>
+      <input type="file" id="flightImportInput" class="flight-card__import-input" accept="application/json">
+      <span class="flight-card__import-status" id="flightImportStatus"></span>
+    </div>
+    <p class="flight-card__hint">
+      Généré localement par <code>track_flights.py</code> (voir le README) :
+      un petit script open source qui interroge Google Flights pour toi,
+      sans backend ni clé d'API.
+    </p>
+
     <form id="flightForm" class="flight-form">
       <input type="number" id="flightPrice" class="flight-form__price" placeholder="Prix trouvé (€)" inputmode="decimal" min="1" step="1" required>
       <input type="text" id="flightAirline" class="flight-form__airline" placeholder="Compagnie (ex: Air France)" maxlength="40">

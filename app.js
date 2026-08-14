@@ -435,6 +435,43 @@ function wireFlightTracker() {
     saveState();
     renderFlights();
   });
+
+  // Import du flight_prices.json généré localement par track_flights.py
+  const importInput = document.getElementById("flightImportInput");
+  const importStatus = document.getElementById("flightImportStatus");
+  importInput.addEventListener("change", async () => {
+    const file = importInput.files[0];
+    if (!file) return;
+    try {
+      const data = JSON.parse(await file.text());
+      if (!Array.isArray(data)) throw new Error("format inattendu (tableau JSON attendu)");
+
+      const existingIds = new Set(state.flights.entries.map((entry) => entry.id));
+      let added = 0;
+      data.forEach((raw) => {
+        if (!raw || typeof raw.price !== "number" || !(raw.price > 0)) return;
+        const id = raw.id || `import-${raw.loggedDate || todayISO()}-${raw.price}`;
+        if (existingIds.has(id)) return;
+        existingIds.add(id);
+        state.flights.entries.unshift({
+          id,
+          loggedDate: raw.loggedDate || todayISO(),
+          price: raw.price,
+          airline: raw.airline || "",
+          link: raw.link || "",
+        });
+        added++;
+      });
+
+      saveState();
+      renderFlights();
+      importStatus.textContent = added > 0 ? `✅ ${added} prix importé(s)` : "Déjà à jour, rien à ajouter";
+    } catch (err) {
+      importStatus.textContent = "⚠️ Fichier invalide";
+    } finally {
+      importInput.value = "";
+    }
+  });
 }
 
 function renderFlights() {

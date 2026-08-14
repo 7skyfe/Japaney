@@ -56,7 +56,46 @@ Aucune installation nécessaire : c'est du HTML/CSS/JS pur, sans dépendance.
     période) ;
   - un **carnet de prix** permet d'enregistrer chaque prix trouvé (montant,
     compagnie, lien) pour suivre son évolution dans le temps ; le meilleur
-    prix est mis en avant avec son poids en % du budget "Voyage 1 mois".
+    prix est mis en avant avec son poids en % du budget "Voyage 1 mois" ;
+  - un bouton **"Importer flight_prices.json"** charge automatiquement les
+    prix collectés par le script `track_flights.py` (voir ci-dessous), avec
+    déduplication.
+
+## Suivi de prix automatisé en local (optionnel) — `track_flights.py`
+
+Plutôt que de re-développer un scraper Google Flights (aucune API publique
+n'existe), ce dépôt s'appuie sur un outil libre déjà écrit et maintenu :
+[**fast-flights**](https://github.com/AWeirdDev/flights) (licence MIT). Cette
+librairie Python interroge directement le moteur interne de Google Flights
+(format Protobuf) sans navigateur headless — rapide, et sans clé d'API.
+
+```bash
+pip install -r requirements.txt
+python3 track_flights.py
+```
+
+À chaque exécution, le script :
+1. cherche l'aller-retour CDG ↔ Haneda (HND), sans escale, aux dates du
+   voyage (8 mai → 7 juin 2027 par défaut, modifiable en tête du fichier) ;
+2. affiche le meilleur prix trouvé dans le terminal ;
+3. l'ajoute à `flight_prices.csv` (historique local, jamais écrasé) ;
+4. met à jour `flight_prices.json`, à importer dans l'appli via le bouton
+   **"Importer flight_prices.json"** du bloc "Vols Paris CDG → Tokyo".
+
+Pour l'automatiser (optionnel), un simple cron suffit — pas besoin de plus,
+et éviter de lancer le script trop souvent limite le risque d'être bridé par
+Google :
+```bash
+# tous les jours à 9h
+0 9 * * * cd /chemin/vers/Japaney && /usr/bin/python3 track_flights.py >> flight_tracker.log 2>&1
+```
+
+⚠️ `fast-flights` n'est pas une API officielle Google : c'est un outil
+communautaire qui peut casser si Google modifie son format, ou se faire
+limiter en cas d'usage trop intensif. C'est pour ça qu'on l'utilise
+ponctuellement (voire une fois par jour via cron), et jamais depuis le
+navigateur (qui ne pourrait de toute façon pas l'appeler directement : CORS
++ absence d'API publique).
 
 ## Structure
 

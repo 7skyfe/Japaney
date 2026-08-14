@@ -564,6 +564,40 @@ main {
   margin: 10px 0 4px;
 }
 
+.flight-card__import {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.flight-card__import-btn {
+  border: 1px dashed var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-weight: 700;
+  font-size: .82rem;
+  padding: 9px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.flight-card__import-btn:hover { border-color: var(--info); }
+
+.flight-card__import-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.flight-card__import-status {
+  font-size: .78rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
 .flight-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
