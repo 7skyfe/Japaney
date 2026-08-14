@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Japaney — Épargne voyage</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗾</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header__title">
+    <span class="app-header__emoji">🗾</span>
+    <div>
+      <h1>Japaney</h1>
+      <p class="app-header__subtitle">Cagnotte voyage — de 0 € à l'objectif</p>
+    </div>
+  </div>
+  <button id="rateBadge" class="rate-badge" title="Taux de conversion EUR → JPY">
+    <span class="rate-badge__dot"></span>
+    <span id="rateBadgeText">1 € ≈ … ¥</span>
+  </button>
+</header>
+
+<main>
+  <section class="summary-bar" id="summaryBar" aria-label="Résumé global">
+    <div class="summary-bar__item">
+      <span class="summary-bar__label">Total épargné</span>
+      <span class="summary-bar__value" id="summaryTotalEur">0 €</span>
+      <span class="summary-bar__sub" id="summaryTotalJpy">≈ 0 ¥</span>
+    </div>
+    <div class="summary-bar__item">
+      <span class="summary-bar__label">Objectifs cumulés</span>
+      <span class="summary-bar__value" id="summaryTargetEur">0 €</span>
+      <span class="summary-bar__sub" id="summaryTargetJpy">≈ 0 ¥</span>
+    </div>
+  </section>
+
+  <nav class="goal-tabs" id="goalTabs" role="tablist" aria-label="Choisir la cagnotte">
+    <button class="goal-tabs__btn is-active" data-goal="japan" role="tab" aria-selected="true">🇯🇵 Japon</button>
+    <button class="goal-tabs__btn" data-goal="other" role="tab" aria-selected="false">✈️ Autre</button>
+  </nav>
+
+  <div class="goals-wrapper" id="goalsWrapper">
+    <!-- Les deux cartes objectifs sont injectées ici par app.js -->
+  </div>
+</main>
+
+<template id="goalCardTemplate">
+  <article class="goal-card" data-goal="">
+    <div class="goal-card__head">
+      <input class="goal-card__label" type="text" maxlength="30" aria-label="Nom de l'objectif">
+      <span class="goal-card__status" data-role="status"></span>
+    </div>
+
+    <div class="goal-card__amounts">
+      <div class="goal-card__current" data-role="currentEur">0 €</div>
+      <div class="goal-card__target">
+        objectif
+        <input class="goal-card__target-input" data-role="targetInput" type="number" inputmode="numeric" min="1" step="50">
+        €
+      </div>
+    </div>
+    <div class="goal-card__jpy" data-role="currentJpy">≈ 0 ¥</div>
+
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-role="progressWrap">
+      <div class="progress__bar" data-role="progressBar" style="width:0%">
+        <span class="progress__pct" data-role="progressPct">0%</span>
+      </div>
+    </div>
+
+    <div class="goal-card__meta">
+      <label class="goal-card__meta-item">
+        <span>Date départ / échéance</span>
+        <input type="date" data-role="deadlineInput">
+      </label>
+      <div class="goal-card__meta-item">
+        <span>Jours restants</span>
+        <strong data-role="daysLeft">–</strong>
+      </div>
+      <div class="goal-card__meta-item">
+        <span>Reste à épargner</span>
+        <strong data-role="remaining">–</strong>
+      </div>
+      <div class="goal-card__meta-item">
+        <span>Effort requis</span>
+        <strong data-role="effort">–</strong>
+      </div>
+    </div>
+
+    <form class="tx-form" data-role="txForm">
+      <div class="tx-form__row">
+        <div class="tx-toggle" data-role="txToggle">
+          <button type="button" class="tx-toggle__btn is-active" data-type="deposit">💰 Dépôt</button>
+          <button type="button" class="tx-toggle__btn" data-type="withdrawal">🧾 Retrait</button>
+        </div>
+      </div>
+      <div class="tx-form__row">
+        <input class="tx-form__amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Montant en €" data-role="txAmount" required>
+      </div>
+      <div class="tx-form__row">
+        <input class="tx-form__note" type="text" maxlength="80" placeholder="Motif (ex: facture imprévue → viré sur le compte courant)" data-role="txNote">
+      </div>
+      <p class="tx-form__hint" data-role="txHint">Un retrait doit être justifié : le motif indique pourquoi cet argent quitte la cagnotte pour retourner sur le compte courant.</p>
+      <button type="submit" class="tx-form__submit" data-role="txSubmit">Ajouter le dépôt</button>
+    </form>
+
+    <div class="tx-list" data-role="txList" aria-label="Historique des mouvements">
+      <p class="tx-list__empty" data-role="txEmpty">Aucun mouvement pour le moment. Ajoute ton premier dépôt !</p>
+    </div>
+  </article>
+</template>
+
+<footer class="app-footer">
+  <p>Taux EUR/JPY mis à jour automatiquement (source : Frankfurter API) — les données restent uniquement sur cet appareil.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
