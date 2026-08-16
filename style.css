@@ -129,6 +129,20 @@ h1 {
 }
 .rate-badge.is-offline .rate-badge__dot { background: var(--warn); }
 
+.app-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+#syncBtn { cursor: pointer; }
+#syncBtn.is-synced {
+  background: color-mix(in srgb, var(--good) 16%, transparent);
+  border-color: var(--good);
+  color: var(--good);
+}
+
 main {
   max-width: 1000px;
   margin: 0 auto;

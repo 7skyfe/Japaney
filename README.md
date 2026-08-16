@@ -39,9 +39,18 @@ Aucune installation nécessaire : c'est du HTML/CSS/JS pur, sans dépendance.
   courant (dépense imprévue, urgence, etc.).
 - **Résumé global** en haut de page (total épargné / objectifs cumulés, en €
   et ¥).
-- **100 % local** : toutes les données sont stockées dans le `localStorage`
-  du navigateur — rien n'est envoyé à un serveur (à part la requête de taux
-  de change, qui ne contient aucune donnée personnelle).
+- **100 % local par défaut** : toutes les données sont stockées dans le
+  `localStorage` du navigateur — rien n'est envoyé à un serveur (à part la
+  requête de taux de change, qui ne contient aucune donnée personnelle). Une
+  **synchronisation optionnelle entre appareils** (Google + Firebase, gratuite)
+  peut être activée — voir plus bas.
+- **Célébrations** : un dépôt de 100 € ou plus déclenche un petit popup avec
+  confettis et une équivalence amusante ("ça fait X ramens au Japon"), tirée
+  d'une liste de repères de prix intégrée à l'appli (pas de recherche en
+  ligne). Atteindre 100 % d'un objectif déclenche une célébration plus
+  importante.
+- **Réinitialisation** : un bouton en bas de page permet d'effacer toutes les
+  données sur l'appareil courant (avec confirmation).
 - **Responsive** : navigation par onglets sur mobile (une cagnotte à la fois),
   les deux cagnottes côte à côte automatiquement à partir de 820 px de large
   (tablette/PC).
@@ -140,6 +149,48 @@ journal CSV, export JSON importable), mais via une API stable plutôt qu'un
 scraper. L'environnement de test Amadeus est gratuit en permanence pour un
 usage personnel raisonnable, mais ses tarifs peuvent avoir un léger
 décalage par rapport au prix affiché en direct sur un site marchand.
+
+## Synchronisation entre appareils (optionnel)
+
+Par défaut, les données restent locales à chaque navigateur : ce que tu
+ajoutes sur ton téléphone n'apparaît pas sur ton PC, et inversement. Pour que
+les deux se synchronisent en direct, l'appli sait se connecter à
+[Firebase](https://firebase.google.com) (offert par Google, gratuit pour cet
+usage) via un compte Google.
+
+1. Va sur https://console.firebase.google.com, connecte-toi avec ton compte
+   Google, et crée un nouveau projet (gratuit, quelques clics, pas de carte
+   bancaire).
+2. Dans le projet : **Build → Firestore Database → Create database** (mode
+   production, région au choix), puis **Build → Authentication → Sign-in
+   method → Google → activer**.
+3. Dans Authentication → Settings → **Authorized domains**, ajoute
+   `7skyfe.github.io` (le domaine du site).
+4. Toujours dans les réglages du projet (⚙️ → Project settings), section "Your
+   apps" : ajoute une **app Web** (icône `</>`), donne-lui un nom, et copie
+   l'objet `firebaseConfig` généré (`apiKey`, `authDomain`, `projectId`,
+   `storageBucket`, `messagingSenderId`, `appId`).
+5. Colle ces 6 valeurs dans `firebaseConfig` en haut de la section "Synchro
+   multi-appareils" de `app.js`.
+6. Dans Firestore → Rules, restreins l'accès à chaque utilisateur pour ses
+   seules données :
+   ```
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /japaneyUsers/{userId} {
+         allow read, write: if request.auth != null && request.auth.uid == userId;
+       }
+     }
+   }
+   ```
+
+Une fois configuré, un bouton **"☁️ Synchroniser"** apparaît en haut de
+l'appli : connecte-toi avec Google sur chaque appareil à synchroniser, et les
+dépôts/retraits se propagent automatiquement entre eux (en temps réel via
+Firestore). Tant que `firebaseConfig` n'est pas rempli, ce bouton indique
+juste que la synchro n'est pas configurée — le reste de l'appli continue de
+fonctionner normalement en local.
 
 ## Structure
 

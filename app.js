@@ -43,26 +43,32 @@ function defaultState() {
   };
 }
 
+// Fusion défensive d'un état (venu du localStorage ou du cloud) avec les
+// valeurs par défaut : garantit la présence des deux cagnottes même si le
+// schéma évolue ou que la source est partielle/périmée.
+function normalizeState(parsed) {
+  const base = defaultState();
+  if (!parsed) return base;
+  return {
+    goals: {
+      japan: { ...base.goals.japan, ...(parsed.goals && parsed.goals.japan) },
+      other: { ...base.goals.other, ...(parsed.goals && parsed.goals.other) },
+    },
+    rate: { ...base.rate, ...parsed.rate },
+    activeTab: parsed.activeTab === "other" ? "other" : "japan",
+    flights: {
+      ...base.flights,
+      ...(parsed.flights || {}),
+      entries: (parsed.flights && Array.isArray(parsed.flights.entries)) ? parsed.flights.entries : [],
+    },
+  };
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
-    const parsed = JSON.parse(raw);
-    const base = defaultState();
-    // fusion défensive : garantit la présence des deux cagnottes même si le schéma évolue
-    return {
-      goals: {
-        japan: { ...base.goals.japan, ...(parsed.goals && parsed.goals.japan) },
-        other: { ...base.goals.other, ...(parsed.goals && parsed.goals.other) },
-      },
-      rate: { ...base.rate, ...parsed.rate },
-      activeTab: parsed.activeTab === "other" ? "other" : "japan",
-      flights: {
-        ...base.flights,
-        ...(parsed.flights || {}),
-        entries: (parsed.flights && Array.isArray(parsed.flights.entries)) ? parsed.flights.entries : [],
-      },
-    };
+    return normalizeState(JSON.parse(raw));
   } catch (e) {
     console.warn("État corrompu, réinitialisation.", e);
     return defaultState();
@@ -71,6 +77,7 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  pushStateToCloud(); // no-op tant que la synchro n'est pas configurée / pas connecté
 }
 
 let state = loadState();
@@ -742,6 +749,138 @@ function render() {
   setRateBadge();
 }
 
+/* ------------------------- Synchro multi-appareils ------------------------ */
+// Optionnelle : tant que firebaseConfig n'est pas renseigné (clé gratuite
+// Firebase, voir README), l'appli reste 100% locale comme avant, sans erreur.
+// Chargée en import() dynamique pour ne jamais bloquer le reste de l'appli
+// (hors-ligne, requête bloquée par un bac à sable, etc.) : l'échec est
+// silencieux et la synchro se contente de rester désactivée.
+
+const firebaseConfig = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+};
+
+const FIREBASE_SDK = "https://www.gstatic.com/firebasejs/10.13.2";
+
+let fbAuth = null;
+let fbDb = null;
+let fbDocRef = null;
+let fbUnsubscribe = null;
+let fbUser = null;
+let fbDocFns = null; // { doc, getDoc, setDoc, onSnapshot }
+let suppressNextSnapshot = false;
+
+function syncConfigured() {
+  return Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+}
+
+function setSyncStatus(text, isSynced) {
+  const label = document.getElementById("syncBadge");
+  const btn = document.getElementById("syncBtn");
+  if (!label || !btn) return;
+  label.textContent = text;
+  btn.classList.toggle("is-synced", Boolean(isSynced));
+}
+
+async function initSync() {
+  if (!syncConfigured()) {
+    setSyncStatus("☁️ Synchro non configurée", false);
+    document.getElementById("syncBtn").addEventListener("click", () => {
+      alert(
+        "La synchronisation entre appareils n'est pas encore activée sur ce site.\n\n" +
+        "Elle nécessite une clé Firebase gratuite -- voir le README (section Synchronisation)."
+      );
+    });
+    return;
+  }
+  try {
+    const [{ initializeApp }, authMod, fsMod] = await Promise.all([
+      import(`${FIREBASE_SDK}/firebase-app.js`),
+      import(`${FIREBASE_SDK}/firebase-auth.js`),
+      import(`${FIREBASE_SDK}/firebase-firestore.js`),
+    ]);
+
+    const app = initializeApp(firebaseConfig);
+    fbAuth = authMod.getAuth(app);
+    fbDb = fsMod.getFirestore(app);
+    fbDocFns = { doc: fsMod.doc, getDoc: fsMod.getDoc, setDoc: fsMod.setDoc, onSnapshot: fsMod.onSnapshot };
+
+    authMod.onAuthStateChanged(fbAuth, (user) => onAuthChanged(user, authMod));
+
+    document.getElementById("syncBtn").addEventListener("click", () => onSyncBtnClick(authMod));
+    setSyncStatus("☁️ Synchroniser", false);
+  } catch (e) {
+    console.warn("Synchro cloud indisponible :", e);
+    setSyncStatus("☁️ Synchro indisponible", false);
+  }
+}
+
+async function onAuthChanged(user, authMod) {
+  fbUser = user;
+  if (fbUnsubscribe) {
+    fbUnsubscribe();
+    fbUnsubscribe = null;
+  }
+
+  if (!user) {
+    fbDocRef = null;
+    setSyncStatus("☁️ Synchroniser", false);
+    return;
+  }
+
+  setSyncStatus(`☁️ ${user.displayName ? user.displayName.split(" ")[0] : "Connecté"}`, true);
+  fbDocRef = fbDocFns.doc(fbDb, "japaneyUsers", user.uid);
+
+  const snap = await fbDocFns.getDoc(fbDocRef);
+  if (snap.exists()) {
+    state = normalizeState(snap.data());
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    render();
+  } else {
+    // Premier appareil à se connecter avec ce compte : on envoie l'état local.
+    await fbDocFns.setDoc(fbDocRef, state);
+  }
+
+  fbUnsubscribe = fbDocFns.onSnapshot(fbDocRef, (docSnap) => {
+    if (suppressNextSnapshot) {
+      suppressNextSnapshot = false;
+      return;
+    }
+    if (!docSnap.exists()) return;
+    state = normalizeState(docSnap.data());
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    render();
+  });
+}
+
+async function onSyncBtnClick(authMod) {
+  if (!fbAuth) return;
+  if (fbUser) {
+    if (confirm("Se déconnecter de la synchronisation sur cet appareil ?")) {
+      await authMod.signOut(fbAuth);
+    }
+    return;
+  }
+  try {
+    await authMod.signInWithPopup(fbAuth, new authMod.GoogleAuthProvider());
+  } catch (e) {
+    alert("Connexion impossible : " + e.message);
+  }
+}
+
+function pushStateToCloud() {
+  if (!fbUser || !fbDocRef || !fbDocFns) return;
+  suppressNextSnapshot = true;
+  fbDocFns.setDoc(fbDocRef, state).catch((e) => {
+    console.warn("Envoi vers le cloud échoué :", e);
+  });
+}
+
 /* --------------------------------- Init --------------------------------- */
 
 buildCards();
@@ -750,6 +889,7 @@ wireCelebration();
 wireFlightTracker();
 render();
 refreshRate();
+initSync();
 
 document.getElementById("goalTabs").addEventListener("click", (e) => {
   const btn = e.target.closest(".goal-tabs__btn");
