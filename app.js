@@ -415,14 +415,17 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   const scaledCount = Math.min(600, Math.round(count * density * spread));
 
   // Physique différente par plateforme : la vitesse "d'origine" (plus rapide)
-  // était parfaite sur iPhone selon les retours, on la garde intacte là ;
-  // seule la version PC a été ralentie suite aux retours suivants. Le seuil
-  // 820px est le même que celui utilisé partout ailleurs pour distinguer
-  // mobile / desktop.
+  // était parfaite sur iPhone selon les retours, on la garde intacte là.
+  // La version PC a déjà été ralentie deux fois et restait encore trop
+  // rapide/nerveuse (chute + rotation) -- on la ralentit nettement plus
+  // fort cette fois, y compris la vitesse de rotation ("vr"), qui donnait
+  // une impression de vitesse même quand la chute elle-même était lente.
+  // Le seuil 820px est le même que celui utilisé partout ailleurs pour
+  // distinguer mobile / desktop.
   const isMobile = window.innerWidth < 820;
   const physics = isMobile
-    ? { vx: 5, vyMin: 1, vyRange: 2, gravity: 0.025, maxFrames: 480 }
-    : { vx: 3.5, vyMin: 0.3, vyRange: 0.6, gravity: 0.01, maxFrames: 750 };
+    ? { vx: 5, vyMin: 1, vyRange: 2, gravity: 0.025, maxFrames: 480, vr: 10 }
+    : { vx: 2, vyMin: 0.15, vyRange: 0.3, gravity: 0.004, maxFrames: 1100, vr: 4 };
 
   const colors = ["#c0132e", "#2563eb", "#1a8a4a", "#e0a834", "#ffffff"];
   const particles = Array.from({ length: scaledCount }, () => ({
@@ -432,7 +435,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
     vy: physics.vyMin + Math.random() * physics.vyRange,
     size: 5 + Math.random() * 6,
     rotation: Math.random() * 360,
-    vr: (Math.random() - 0.5) * 10,
+    vr: (Math.random() - 0.5) * physics.vr,
     color: colors[Math.floor(Math.random() * colors.length)],
   }));
 
