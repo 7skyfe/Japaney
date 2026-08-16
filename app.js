@@ -757,12 +757,12 @@ function render() {
 // silencieux et la synchro se contente de rester désactivée.
 
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyCiJfRsDCmyhXC-YzgBJhSenkq17hs7pdc",
+  authDomain: "japaney-d2ff6.firebaseapp.com",
+  projectId: "japaney-d2ff6",
+  storageBucket: "japaney-d2ff6.firebasestorage.app",
+  messagingSenderId: "1088733052923",
+  appId: "1:1088733052923:web:66b8a2c2ddaa255518155e",
 };
 
 const FIREBASE_SDK = "https://www.gstatic.com/firebasejs/10.13.2";
