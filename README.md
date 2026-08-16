@@ -215,7 +215,7 @@ ci-dessous avec sa source :
 | Sento (bain public, Tokyo) | 550¥ | tarif unique officiel depuis août 2024 | [SoraNews24, 2026](https://soranews24.com/2026/07/30/maximum-entry-fee-for-sento-public-baths-in-tokyo-increases-slightly-for-adults-next-month/) |
 | Onsen (entrée) | 700¥ | 400–2000¥ | [City-Cost](https://www.city-cost.com/blogs/City-Cost/G6qDz-living_medical_gumma_nagano_gifu_gero-shi_ehime_matsuyama-shi) |
 | Pass métro 1 jour (Tokyo) | 700¥ | tarif officiel depuis mars 2025 | [Tokyo Metro](https://www.tokyometro.jp/en/ticket/travel/index.html) |
-| Bol de ramen à Tokyo | 850¥ | 610¥ (moyenne officielle) à 1200¥ (garni) | [Japan Trip Navi, guide 2026](https://kanko-map.com/en/tokyo-ramen-price-compare/) |
+| Bol de ramen à Tokyo | 1000¥ | 600–1200¥ pour un bol classique (390¥ en chaîne low-cost à 1800¥+ en enseigne étoilée) | [Japan Trip Navi, guide 2026](https://kanko-map.com/en/tokyo-ramen-price-compare/) |
 | Place de cinéma | 2000¥ | 2000–2200¥ | [THIS IS JAPAN](https://thisis-japan.com/japans-movie-ticket-prices-soar-to-2200-yen-exploring-cinema-trends-and-costs-in-2025/) |
 | Location yukata (journée) | 3000¥ | 2000–5000¥ | [kanpai-japan](https://www.kanpai-japan.com/japan-travel-guide/buying-renting-kimono-yukata) |
 | Nuit en capsule hôtel | 3500¥ | 2500–5000¥ | [Tourism Attractions, guide 2026](https://tourismattractions.net/japan/tokyo-capsule-hotels-guide) |

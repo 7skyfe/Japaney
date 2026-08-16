@@ -365,7 +365,7 @@ const JAPAN_EQUIVALENTS = [
   { label: "entrées de sento (bain public) à Tokyo", jpy: 550, emoji: "🛁" },
   { label: "entrées d'onsen", jpy: 700, emoji: "♨️" },
   { label: "pass 1 jour métro de Tokyo", jpy: 700, emoji: "🗼" },
-  { label: "bols de ramen à Tokyo", jpy: 850, emoji: "🍜" },
+  { label: "bols de ramen à Tokyo", jpy: 1000, emoji: "🍜" },
   { label: "places de cinéma", jpy: 2000, emoji: "🎬" },
   { label: "locations de yukata pour la journée", jpy: 3000, emoji: "🎐" },
   { label: "nuits en capsule hôtel", jpy: 3500, emoji: "🛏️" },
