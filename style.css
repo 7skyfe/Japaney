@@ -135,49 +135,60 @@ main {
   padding: 14px 16px 0;
 }
 
-.summary-bar {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.summary-bar__item {
+/* ---------- Panneau principal : stats + ajout de mouvement ---------- */
+.hero-panel {
+  max-width: 560px;
+  margin: 0 auto 20px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 12px 14px;
+  padding: 22px 20px;
   box-shadow: var(--shadow);
 }
 
-.summary-bar__label {
+.hero-panel__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.hero-stat {
+  text-align: center;
+  background: var(--surface-alt);
+  border-radius: 14px;
+  padding: 14px 8px;
+}
+
+.hero-stat__label {
   display: block;
-  font-size: .7rem;
+  font-size: .68rem;
   text-transform: uppercase;
   letter-spacing: .04em;
   color: var(--text-dim);
   font-weight: 700;
 }
 
-.summary-bar__value {
+.hero-stat__value {
   display: block;
-  font-size: 1.25rem;
+  font-size: 1.55rem;
   font-weight: 800;
-  margin-top: 2px;
+  letter-spacing: -.01em;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
 }
 
-.summary-bar__sub {
+.hero-stat__sub {
   display: block;
-  font-size: .75rem;
+  font-size: .74rem;
   color: var(--text-dim);
   margin-top: 1px;
 }
 
-/* Tabs: only relevant on narrow screens */
 .goal-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .goal-tabs__btn {
@@ -196,6 +207,58 @@ main {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-ink);
+}
+
+.hero-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hero-form__amount {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 16px 14px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.hero-form__amount:focus { outline: 2px solid var(--info); outline-offset: -1px; }
+
+.hero-form__note {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: .92rem;
+}
+.hero-form__note:focus { outline: 2px solid var(--info); outline-offset: -1px; }
+
+.hero-form__submit {
+  width: 100%;
+  border: none;
+  background: var(--good);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.02rem;
+  padding: 15px;
+  border-radius: 14px;
+  cursor: pointer;
+  min-height: 48px;
+}
+.hero-form__submit.is-withdrawal { background: var(--bad); }
+
+.hero-history {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  max-height: 280px;
 }
 
 .goals-wrapper {
@@ -355,14 +418,6 @@ main {
   padding: 0;
 }
 
-.tx-form {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--border);
-}
-
-.tx-form__row { margin-bottom: 8px; }
-
 .tx-toggle {
   display: flex;
   gap: 8px;
@@ -391,39 +446,12 @@ main {
   color: var(--bad);
 }
 
-.tx-form__amount,
-.tx-form__note {
-  width: 100%;
-  border: 1px solid var(--border);
-  background: var(--surface-alt);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 11px 12px;
-  font-size: .95rem;
-}
-.tx-form__amount:focus,
-.tx-form__note:focus { outline: 2px solid var(--info); outline-offset: -1px; }
-
 .tx-form__hint {
   font-size: .72rem;
   color: var(--text-dim);
-  margin: 4px 0 10px;
+  margin: 4px 0 2px;
   line-height: 1.35;
 }
-
-.tx-form__submit {
-  width: 100%;
-  border: none;
-  background: var(--good);
-  color: #fff;
-  font-weight: 800;
-  font-size: .95rem;
-  padding: 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  min-height: 44px;
-}
-.tx-form__submit.is-withdrawal { background: var(--bad); }
 
 .tx-list {
   margin-top: 14px;
@@ -737,9 +765,7 @@ main {
 @media (min-width: 820px) {
   main { padding: 22px 24px 0; }
 
-  .summary-bar { grid-template-columns: repeat(2, minmax(220px, 320px)); }
-
-  .goal-tabs { display: none; }
+  .hero-panel { padding: 26px 28px; }
 
   .goals-wrapper {
     display: grid;

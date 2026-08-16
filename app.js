@@ -207,72 +207,6 @@ function wireCard(key, node) {
       render();
     }
   });
-
-  // Toggle dépôt / retrait
-  const toggle = node.querySelector('[data-role="txToggle"]');
-  const submitBtn = node.querySelector('[data-role="txSubmit"]');
-  const noteInput = node.querySelector('[data-role="txNote"]');
-  const hint = node.querySelector('[data-role="txHint"]');
-  let currentType = "deposit";
-
-  toggle.addEventListener("click", (e) => {
-    const btn = e.target.closest(".tx-toggle__btn");
-    if (!btn) return;
-    currentType = btn.dataset.type;
-    toggle.querySelectorAll(".tx-toggle__btn").forEach((b) => b.classList.toggle("is-active", b === btn));
-    submitBtn.classList.toggle("is-withdrawal", currentType === "withdrawal");
-    submitBtn.textContent = currentType === "withdrawal" ? "Ajouter le retrait" : "Ajouter le dépôt";
-    noteInput.placeholder =
-      currentType === "withdrawal"
-        ? "Motif obligatoire (ex: facture imprévue → viré sur le compte courant)"
-        : "Motif (optionnel)";
-    hint.style.display = currentType === "withdrawal" ? "block" : "none";
-  });
-  hint.style.display = "none";
-
-  // La validité personnalisée doit être effacée pendant la saisie, sinon le
-  // navigateur bloque le prochain "submit" avant même que notre handler ne s'exécute.
-  noteInput.addEventListener("input", () => noteInput.setCustomValidity(""));
-
-  // Formulaire d'ajout
-  const form = node.querySelector('[data-role="txForm"]');
-  const amountInput = node.querySelector('[data-role="txAmount"]');
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const amount = parseFloat(amountInput.value);
-    if (!(amount > 0)) return;
-    const note = noteInput.value.trim();
-    if (currentType === "withdrawal" && !note) {
-      noteInput.focus();
-      noteInput.setCustomValidity("Merci de justifier ce retrait (motif obligatoire).");
-      noteInput.reportValidity();
-      return;
-    }
-    noteInput.setCustomValidity("");
-
-    goal.transactions.unshift({
-      id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
-      date: todayISO(),
-      type: currentType,
-      amount,
-      note,
-    });
-    saveState();
-    amountInput.value = "";
-    noteInput.value = "";
-    render();
-  });
-
-  // Liste des transactions (délégation pour la suppression)
-  const txList = node.querySelector('[data-role="txList"]');
-  txList.addEventListener("click", (e) => {
-    const btn = e.target.closest(".tx-item__del");
-    if (!btn) return;
-    const id = btn.dataset.id;
-    goal.transactions = goal.transactions.filter((t) => t.id !== id);
-    saveState();
-    render();
-  });
 }
 
 function renderCard(key) {
@@ -308,17 +242,18 @@ function renderCard(key) {
     current >= goal.target ? "0 € 🎉" : eurFmt.format(goal.target - current);
 
   node.querySelector('[data-role="effort"]').textContent = effortText(goal, current);
+}
 
-  // Historique
-  const txList = node.querySelector('[data-role="txList"]');
-  const emptyMsg = txList.querySelector('[data-role="txEmpty"]');
-  txList.querySelectorAll(".tx-item").forEach((el) => el.remove());
+/** Rend une liste de transactions dans un conteneur `.tx-list` donné (utilisé
+ * par le panneau central, qui affiche l'historique de la cagnotte active). */
+function renderTxList(listEl, emptyEl, transactions) {
+  listEl.querySelectorAll(".tx-item").forEach((el) => el.remove());
 
-  if (goal.transactions.length === 0) {
-    emptyMsg.style.display = "block";
+  if (transactions.length === 0) {
+    emptyEl.style.display = "block";
   } else {
-    emptyMsg.style.display = "none";
-    goal.transactions.forEach((tx) => {
+    emptyEl.style.display = "none";
+    transactions.forEach((tx) => {
       const item = document.createElement("div");
       item.className = "tx-item";
       const isWithdrawal = tx.type === "withdrawal";
@@ -335,7 +270,7 @@ function renderCard(key) {
         </div>
         <button type="button" class="tx-item__del" data-id="${tx.id}" aria-label="Supprimer ce mouvement">✕</button>
       `;
-      txList.appendChild(item);
+      listEl.appendChild(item);
     });
   }
 }
@@ -371,6 +306,81 @@ function renderTabs() {
   Object.entries(cardEls).forEach(([key, node]) => {
     node.classList.toggle("is-active", key === state.activeTab);
   });
+}
+
+/* --------------------- Panneau central : ajout + historique -------------------- */
+
+let heroTxType = "deposit";
+
+function wireHeroForm() {
+  const toggle = document.getElementById("heroTxToggle");
+  const form = document.getElementById("heroTxForm");
+  const amountInput = document.getElementById("heroTxAmount");
+  const noteInput = document.getElementById("heroTxNote");
+  const submitBtn = document.getElementById("heroTxSubmit");
+  const hint = document.getElementById("heroTxHint");
+  const list = document.getElementById("heroTxList");
+
+  hint.style.display = "none";
+
+  toggle.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tx-toggle__btn");
+    if (!btn) return;
+    heroTxType = btn.dataset.type;
+    toggle.querySelectorAll(".tx-toggle__btn").forEach((b) => b.classList.toggle("is-active", b === btn));
+    submitBtn.classList.toggle("is-withdrawal", heroTxType === "withdrawal");
+    submitBtn.textContent = heroTxType === "withdrawal" ? "Ajouter le retrait" : "Ajouter le dépôt";
+    noteInput.placeholder =
+      heroTxType === "withdrawal"
+        ? "Motif obligatoire (ex: facture imprévue → viré sur le compte courant)"
+        : "Motif (optionnel)";
+    hint.style.display = heroTxType === "withdrawal" ? "block" : "none";
+  });
+
+  // La validité personnalisée doit être effacée pendant la saisie, sinon le
+  // navigateur bloque le prochain "submit" avant même que notre handler ne s'exécute.
+  noteInput.addEventListener("input", () => noteInput.setCustomValidity(""));
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const amount = parseFloat(amountInput.value);
+    if (!(amount > 0)) return;
+    const note = noteInput.value.trim();
+    if (heroTxType === "withdrawal" && !note) {
+      noteInput.focus();
+      noteInput.setCustomValidity("Merci de justifier ce retrait (motif obligatoire).");
+      noteInput.reportValidity();
+      return;
+    }
+    noteInput.setCustomValidity("");
+
+    state.goals[state.activeTab].transactions.unshift({
+      id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+      date: todayISO(),
+      type: heroTxType,
+      amount,
+      note,
+    });
+    saveState();
+    amountInput.value = "";
+    noteInput.value = "";
+    render();
+  });
+
+  list.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tx-item__del");
+    if (!btn) return;
+    const goal = state.goals[state.activeTab];
+    goal.transactions = goal.transactions.filter((t) => t.id !== btn.dataset.id);
+    saveState();
+    render();
+  });
+}
+
+function renderHeroHistory() {
+  const list = document.getElementById("heroTxList");
+  const empty = document.getElementById("heroTxEmpty");
+  renderTxList(list, empty, state.goals[state.activeTab].transactions);
 }
 
 /* ----------------------------- Suivi des vols ---------------------------- */
@@ -538,6 +548,7 @@ function render() {
   Object.keys(state.goals).forEach(renderCard);
   renderSummary();
   renderTabs();
+  renderHeroHistory();
   renderFlights();
   setRateBadge();
 }
@@ -545,6 +556,7 @@ function render() {
 /* --------------------------------- Init --------------------------------- */
 
 buildCards();
+wireHeroForm();
 wireFlightTracker();
 render();
 refreshRate();
@@ -555,6 +567,7 @@ document.getElementById("goalTabs").addEventListener("click", (e) => {
   state.activeTab = btn.dataset.goal;
   saveState();
   renderTabs();
+  renderHeroHistory();
 });
 
 // Revérifie le taux si l'appli reste ouverte plusieurs jours / revient au premier plan

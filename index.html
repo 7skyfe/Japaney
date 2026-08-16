@@ -25,23 +25,40 @@
 </header>
 
 <main>
-  <section class="summary-bar" id="summaryBar" aria-label="Résumé global">
-    <div class="summary-bar__item">
-      <span class="summary-bar__label">Total épargné</span>
-      <span class="summary-bar__value" id="summaryTotalEur">0 €</span>
-      <span class="summary-bar__sub" id="summaryTotalJpy">≈ 0 ¥</span>
+  <section class="hero-panel" aria-label="Ajouter un mouvement">
+    <div class="hero-panel__stats">
+      <div class="hero-stat">
+        <span class="hero-stat__label">Total épargné</span>
+        <span class="hero-stat__value" id="summaryTotalEur">0 €</span>
+        <span class="hero-stat__sub" id="summaryTotalJpy">≈ 0 ¥</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat__label">Objectifs cumulés</span>
+        <span class="hero-stat__value" id="summaryTargetEur">0 €</span>
+        <span class="hero-stat__sub" id="summaryTargetJpy">≈ 0 ¥</span>
+      </div>
     </div>
-    <div class="summary-bar__item">
-      <span class="summary-bar__label">Objectifs cumulés</span>
-      <span class="summary-bar__value" id="summaryTargetEur">0 €</span>
-      <span class="summary-bar__sub" id="summaryTargetJpy">≈ 0 ¥</span>
+
+    <nav class="goal-tabs" id="goalTabs" role="tablist" aria-label="Choisir la cagnotte">
+      <button class="goal-tabs__btn is-active" data-goal="japan" role="tab" aria-selected="true">🇯🇵 Japon</button>
+      <button class="goal-tabs__btn" data-goal="other" role="tab" aria-selected="false">✈️ Autre</button>
+    </nav>
+
+    <form class="hero-form" id="heroTxForm">
+      <div class="tx-toggle" id="heroTxToggle">
+        <button type="button" class="tx-toggle__btn is-active" data-type="deposit">💰 Dépôt</button>
+        <button type="button" class="tx-toggle__btn" data-type="withdrawal">🧾 Retrait</button>
+      </div>
+      <input class="hero-form__amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Montant en €" id="heroTxAmount" required>
+      <input class="hero-form__note" type="text" maxlength="80" placeholder="Motif (optionnel)" id="heroTxNote">
+      <p class="tx-form__hint" id="heroTxHint">Un retrait doit être justifié : le motif indique pourquoi cet argent quitte la cagnotte pour retourner sur le compte courant.</p>
+      <button type="submit" class="hero-form__submit" id="heroTxSubmit">Ajouter le dépôt</button>
+    </form>
+
+    <div class="tx-list hero-history" id="heroTxList" aria-label="Historique des mouvements">
+      <p class="tx-list__empty" id="heroTxEmpty">Aucun mouvement pour le moment. Ajoute ton premier dépôt !</p>
     </div>
   </section>
-
-  <nav class="goal-tabs" id="goalTabs" role="tablist" aria-label="Choisir la cagnotte">
-    <button class="goal-tabs__btn is-active" data-goal="japan" role="tab" aria-selected="true">🇯🇵 Japon</button>
-    <button class="goal-tabs__btn" data-goal="other" role="tab" aria-selected="false">✈️ Autre</button>
-  </nav>
 
   <div class="goals-wrapper" id="goalsWrapper">
     <!-- Les deux cartes objectifs sont injectées ici par app.js -->
@@ -134,27 +151,6 @@
         <span>Effort requis</span>
         <strong data-role="effort">–</strong>
       </div>
-    </div>
-
-    <form class="tx-form" data-role="txForm">
-      <div class="tx-form__row">
-        <div class="tx-toggle" data-role="txToggle">
-          <button type="button" class="tx-toggle__btn is-active" data-type="deposit">💰 Dépôt</button>
-          <button type="button" class="tx-toggle__btn" data-type="withdrawal">🧾 Retrait</button>
-        </div>
-      </div>
-      <div class="tx-form__row">
-        <input class="tx-form__amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Montant en €" data-role="txAmount" required>
-      </div>
-      <div class="tx-form__row">
-        <input class="tx-form__note" type="text" maxlength="80" placeholder="Motif (ex: facture imprévue → viré sur le compte courant)" data-role="txNote">
-      </div>
-      <p class="tx-form__hint" data-role="txHint">Un retrait doit être justifié : le motif indique pourquoi cet argent quitte la cagnotte pour retourner sur le compte courant.</p>
-      <button type="submit" class="tx-form__submit" data-role="txSubmit">Ajouter le dépôt</button>
-    </form>
-
-    <div class="tx-list" data-role="txList" aria-label="Historique des mouvements">
-      <p class="tx-list__empty" data-role="txEmpty">Aucun mouvement pour le moment. Ajoute ton premier dépôt !</p>
     </div>
   </article>
 </template>
