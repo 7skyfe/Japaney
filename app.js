@@ -352,37 +352,39 @@ function distributeDeposit(amount, note) {
 // une image concrète à un dépôt, façon "ça équivaut à...".
 // Prix vérifiés par recherche (sources citées dans le README), pas estimés
 // à vue de nez -- fourchettes larges ramenées à une valeur représentative.
+// "unit" = désignation au singulier avec article, affichée entre parenthèses
+// pour donner le prix unitaire (ex : "38,04 € le billet").
 const JAPAN_EQUIVALENTS = [
-  { label: "cafés en canette au distributeur", jpy: 120, emoji: "☕" },
-  { label: "bouteilles d'eau au konbini", jpy: 130, emoji: "💧" },
-  { label: "onigiri au konbini", jpy: 150, emoji: "🍙" },
-  { label: "cannettes de thé glacé", jpy: 150, emoji: "🥤" },
-  { label: "plats de sushi au kaiten-zushi", jpy: 160, emoji: "🍣" },
-  { label: "tickets de train JR (courte distance)", jpy: 200, emoji: "🚆" },
-  { label: "trajets en métro à Tokyo", jpy: 200, emoji: "🚇" },
-  { label: "tickets de bus urbain", jpy: 220, emoji: "🚌" },
-  { label: "capsules gachapon", jpy: 300, emoji: "🎁" },
-  { label: "parties de purikura", jpy: 500, emoji: "📸" },
-  { label: "entrées de sanctuaire ou temple", jpy: 500, emoji: "⛩️" },
-  { label: "mangas neufs", jpy: 500, emoji: "📚" },
-  { label: "entrées de sento (bain public) à Tokyo", jpy: 550, emoji: "🛁" },
-  { label: "entrées d'onsen", jpy: 700, emoji: "♨️" },
-  { label: "pass 1 jour métro de Tokyo", jpy: 700, emoji: "🗼" },
-  { label: "bols de ramen à Tokyo", jpy: 1000, emoji: "🍜" },
-  { label: "places de cinéma", jpy: 2000, emoji: "🎬" },
-  { label: "locations de yukata pour la journée", jpy: 3000, emoji: "🎐" },
-  { label: "nuits en capsule hôtel", jpy: 3500, emoji: "🛏️" },
-  { label: "locations de kimono pour la journée", jpy: 5000, emoji: "👘" },
-  { label: "figurines Nendoroid", jpy: 6000, emoji: "🎎" },
-  { label: "jeux Nintendo Switch", jpy: 7500, emoji: "🎮" },
-  { label: "entrées 1 jour à Super Nintendo World (USJ)", jpy: 8900, emoji: "🍄" },
-  { label: "entrées 1 jour à Tokyo Disneyland", jpy: 9400, emoji: "🏰" },
-  { label: "nuits en hôtel business correct", jpy: 10000, emoji: "🏨" },
-  { label: "billets de shinkansen Tokyo → Kyoto", jpy: 14000, emoji: "🚄" },
-  { label: "repas kaiseki gastronomiques", jpy: 15000, emoji: "🍱" },
-  { label: "couteaux de maître sushi (Yanagiba)", jpy: 25000, emoji: "🔪" },
-  { label: "vols intérieurs Tokyo → Osaka (tarif standard)", jpy: 32000, emoji: "✈️" },
-  { label: "consoles Nintendo Switch 2", jpy: 60000, emoji: "🕹️" },
+  { label: "cafés en canette au distributeur", unit: "le café", jpy: 120, emoji: "☕" },
+  { label: "bouteilles d'eau au konbini", unit: "la bouteille", jpy: 130, emoji: "💧" },
+  { label: "onigiri au konbini", unit: "l'onigiri", jpy: 150, emoji: "🍙" },
+  { label: "cannettes de thé glacé", unit: "la cannette", jpy: 150, emoji: "🥤" },
+  { label: "plats de sushi au kaiten-zushi", unit: "le plat", jpy: 160, emoji: "🍣" },
+  { label: "tickets de train JR (courte distance)", unit: "le ticket", jpy: 200, emoji: "🚆" },
+  { label: "trajets en métro à Tokyo", unit: "le trajet", jpy: 200, emoji: "🚇" },
+  { label: "tickets de bus urbain", unit: "le ticket", jpy: 220, emoji: "🚌" },
+  { label: "capsules gachapon", unit: "la capsule", jpy: 300, emoji: "🎁" },
+  { label: "parties de purikura", unit: "la partie", jpy: 500, emoji: "📸" },
+  { label: "entrées de sanctuaire ou temple", unit: "l'entrée", jpy: 500, emoji: "⛩️" },
+  { label: "mangas neufs", unit: "le manga", jpy: 500, emoji: "📚" },
+  { label: "entrées de sento (bain public) à Tokyo", unit: "l'entrée", jpy: 550, emoji: "🛁" },
+  { label: "entrées d'onsen", unit: "l'entrée", jpy: 700, emoji: "♨️" },
+  { label: "pass 1 jour métro de Tokyo", unit: "le pass", jpy: 700, emoji: "🗼" },
+  { label: "bols de ramen à Tokyo", unit: "le bol", jpy: 1000, emoji: "🍜" },
+  { label: "places de cinéma", unit: "la place", jpy: 2000, emoji: "🎬" },
+  { label: "locations de yukata pour la journée", unit: "la location", jpy: 3000, emoji: "🎐" },
+  { label: "nuits en capsule hôtel", unit: "la nuit", jpy: 3500, emoji: "🛏️" },
+  { label: "locations de kimono pour la journée", unit: "la location", jpy: 5000, emoji: "👘" },
+  { label: "figurines Nendoroid", unit: "la figurine", jpy: 6000, emoji: "🎎" },
+  { label: "jeux Nintendo Switch", unit: "le jeu", jpy: 7500, emoji: "🎮" },
+  { label: "entrées 1 jour à Super Nintendo World (USJ)", unit: "l'entrée", jpy: 8900, emoji: "🍄" },
+  { label: "entrées 1 jour à Tokyo Disneyland", unit: "l'entrée", jpy: 9400, emoji: "🏰" },
+  { label: "nuits en hôtel business correct", unit: "la nuit", jpy: 10000, emoji: "🏨" },
+  { label: "billets de shinkansen Tokyo → Kyoto", unit: "le billet", jpy: 14000, emoji: "🚄" },
+  { label: "repas kaiseki gastronomiques", unit: "le repas", jpy: 15000, emoji: "🍱" },
+  { label: "couteaux de maître sushi (Yanagiba)", unit: "le couteau", jpy: 25000, emoji: "🔪" },
+  { label: "vols intérieurs Tokyo → Osaka (tarif standard)", unit: "le vol", jpy: 32000, emoji: "✈️" },
+  { label: "consoles Nintendo Switch 2", unit: "la console", jpy: 60000, emoji: "🕹️" },
 ];
 
 function pickEquivalent(amountJpy) {
@@ -515,8 +517,12 @@ function maybeCelebrateDeposit(amount, before) {
   if (amount >= 1) {
     const amountJpy = amount * state.rate.value;
     const equivalent = pickEquivalent(amountJpy);
+    // Prix unitaire en euros de l'élément cité, reconverti depuis le prix en
+    // yen avec le taux courant -- affiché entre parenthèses juste avant
+    // l'emoji, comme demandé.
+    const unitEur = equivalent ? equivalent.jpy / state.rate.value : 0;
     const equivLine = equivalent
-      ? ` Ça équivaut à ${equivalent.count} ${equivalent.label} au Japon ! ${equivalent.emoji}`
+      ? ` Ça équivaut à ${equivalent.count} ${equivalent.label} au Japon (${eurFmt.format(unitEur)} ${equivalent.unit}) ! ${equivalent.emoji}`
       : "";
     showCelebration({
       emoji: "🎉",
