@@ -15,7 +15,7 @@ function defaultState() {
   return {
     goals: {
       japan: {
-        label: "🇯🇵 PVT Japon",
+        label: "🗾 PVT Japon",
         target: 10000,
         startDate: todayISO(),
         deadline: "2027-11-01",
@@ -312,29 +312,52 @@ function renderTabs() {
 
 let heroTxType = "deposit";
 
+function newTxId() {
+  return Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+}
+
+/** Un dépôt n'est jamais affecté à la main : il complète d'abord "Voyage 1
+ * mois" jusqu'à son objectif, puis le reste part dans "PVT Japon". Peut donc
+ * créer une ou deux transactions selon qu'il y a débordement ou non. */
+function distributeDeposit(amount, note) {
+  const other = state.goals.other;
+  const japan = state.goals.japan;
+  const otherRemaining = Math.max(0, other.target - goalBalance(other));
+  const toOther = Math.min(amount, otherRemaining);
+  const toJapan = amount - toOther;
+  const date = todayISO();
+
+  if (toOther > 0) {
+    other.transactions.unshift({ id: newTxId(), date, type: "deposit", amount: toOther, note });
+  }
+  if (toJapan > 0) {
+    japan.transactions.unshift({ id: newTxId(), date, type: "deposit", amount: toJapan, note });
+  }
+}
+
 function wireHeroForm() {
   const toggle = document.getElementById("heroTxToggle");
   const form = document.getElementById("heroTxForm");
   const amountInput = document.getElementById("heroTxAmount");
   const noteInput = document.getElementById("heroTxNote");
   const submitBtn = document.getElementById("heroTxSubmit");
-  const hint = document.getElementById("heroTxHint");
+  const depositHint = document.getElementById("heroDepositHint");
+  const withdrawalHint = document.getElementById("heroTxHint");
   const list = document.getElementById("heroTxList");
-
-  hint.style.display = "none";
 
   toggle.addEventListener("click", (e) => {
     const btn = e.target.closest(".tx-toggle__btn");
     if (!btn) return;
     heroTxType = btn.dataset.type;
+    const isWithdrawal = heroTxType === "withdrawal";
     toggle.querySelectorAll(".tx-toggle__btn").forEach((b) => b.classList.toggle("is-active", b === btn));
-    submitBtn.classList.toggle("is-withdrawal", heroTxType === "withdrawal");
-    submitBtn.textContent = heroTxType === "withdrawal" ? "Ajouter le retrait" : "Ajouter le dépôt";
-    noteInput.placeholder =
-      heroTxType === "withdrawal"
-        ? "Motif obligatoire (ex: facture imprévue → viré sur le compte courant)"
-        : "Motif (optionnel)";
-    hint.style.display = heroTxType === "withdrawal" ? "block" : "none";
+    submitBtn.classList.toggle("is-withdrawal", isWithdrawal);
+    submitBtn.textContent = isWithdrawal ? "Ajouter le retrait" : "Ajouter le dépôt";
+    noteInput.placeholder = isWithdrawal
+      ? "Motif obligatoire (ex: facture imprévue → viré sur le compte courant)"
+      : "Motif (optionnel)";
+    depositHint.style.display = isWithdrawal ? "none" : "block";
+    withdrawalHint.style.display = isWithdrawal ? "block" : "none";
   });
 
   // La validité personnalisée doit être effacée pendant la saisie, sinon le
@@ -346,21 +369,26 @@ function wireHeroForm() {
     const amount = parseFloat(amountInput.value);
     if (!(amount > 0)) return;
     const note = noteInput.value.trim();
-    if (heroTxType === "withdrawal" && !note) {
-      noteInput.focus();
-      noteInput.setCustomValidity("Merci de justifier ce retrait (motif obligatoire).");
-      noteInput.reportValidity();
-      return;
-    }
-    noteInput.setCustomValidity("");
 
-    state.goals[state.activeTab].transactions.unshift({
-      id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
-      date: todayISO(),
-      type: heroTxType,
-      amount,
-      note,
-    });
+    if (heroTxType === "withdrawal") {
+      if (!note) {
+        noteInput.focus();
+        noteInput.setCustomValidity("Merci de justifier ce retrait (motif obligatoire).");
+        noteInput.reportValidity();
+        return;
+      }
+      noteInput.setCustomValidity("");
+      state.goals[state.activeTab].transactions.unshift({
+        id: newTxId(),
+        date: todayISO(),
+        type: "withdrawal",
+        amount,
+        note,
+      });
+    } else {
+      distributeDeposit(amount, note);
+    }
+
     saveState();
     amountInput.value = "";
     noteInput.value = "";

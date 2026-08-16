@@ -137,13 +137,16 @@ main {
 
 /* ---------- Panneau principal : stats + ajout de mouvement ---------- */
 .hero-panel {
-  max-width: 560px;
-  margin: 0 auto 20px;
+  margin: 0 0 20px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 22px 20px;
   box-shadow: var(--shadow);
+}
+
+.hero-panel__top {
+  margin-bottom: 18px;
 }
 
 .hero-panel__stats {
@@ -253,6 +256,8 @@ main {
   min-height: 48px;
 }
 .hero-form__submit.is-withdrawal { background: var(--bad); }
+
+#heroTxHint { display: none; }
 
 .hero-history {
   margin-top: 16px;
@@ -765,7 +770,18 @@ main {
 @media (min-width: 820px) {
   main { padding: 22px 24px 0; }
 
-  .hero-panel { padding: 26px 28px; }
+  .hero-panel {
+    padding: 26px 28px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 8px 32px;
+  }
+
+  .hero-panel__top { grid-column: 1; grid-row: 1; margin-bottom: 0; }
+  .hero-panel__action { grid-column: 2; grid-row: 1; }
+  .hero-history { grid-column: 1 / -1; grid-row: 2; }
+
+  .hero-panel__top .hero-panel__stats { grid-template-columns: 1fr; }
 
   .goals-wrapper {
     display: grid;
@@ -782,5 +798,10 @@ main {
 }
 
 @media (min-width: 1100px) {
-  main { max-width: 1100px; }
+  main { max-width: 1200px; }
+}
+
+@media (min-width: 1500px) {
+  main { max-width: 1500px; }
+  .hero-panel { grid-template-columns: 340px 1fr; }
 }

@@ -26,34 +26,39 @@
 
 <main>
   <section class="hero-panel" aria-label="Ajouter un mouvement">
-    <div class="hero-panel__stats">
-      <div class="hero-stat">
-        <span class="hero-stat__label">Total épargné</span>
-        <span class="hero-stat__value" id="summaryTotalEur">0 €</span>
-        <span class="hero-stat__sub" id="summaryTotalJpy">≈ 0 ¥</span>
+    <div class="hero-panel__top">
+      <div class="hero-panel__stats">
+        <div class="hero-stat">
+          <span class="hero-stat__label">Total épargné</span>
+          <span class="hero-stat__value" id="summaryTotalEur">0 €</span>
+          <span class="hero-stat__sub" id="summaryTotalJpy">≈ 0 ¥</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat__label">Objectifs cumulés</span>
+          <span class="hero-stat__value" id="summaryTargetEur">0 €</span>
+          <span class="hero-stat__sub" id="summaryTargetJpy">≈ 0 ¥</span>
+        </div>
       </div>
-      <div class="hero-stat">
-        <span class="hero-stat__label">Objectifs cumulés</span>
-        <span class="hero-stat__value" id="summaryTargetEur">0 €</span>
-        <span class="hero-stat__sub" id="summaryTargetJpy">≈ 0 ¥</span>
-      </div>
+
+      <nav class="goal-tabs" id="goalTabs" role="tablist" aria-label="Cagnotte affichée / ciblée par un retrait">
+        <button class="goal-tabs__btn is-active" data-goal="japan" role="tab" aria-selected="true">🗾 Japon</button>
+        <button class="goal-tabs__btn" data-goal="other" role="tab" aria-selected="false">✈️ Autre</button>
+      </nav>
     </div>
 
-    <nav class="goal-tabs" id="goalTabs" role="tablist" aria-label="Choisir la cagnotte">
-      <button class="goal-tabs__btn is-active" data-goal="japan" role="tab" aria-selected="true">🇯🇵 Japon</button>
-      <button class="goal-tabs__btn" data-goal="other" role="tab" aria-selected="false">✈️ Autre</button>
-    </nav>
-
-    <form class="hero-form" id="heroTxForm">
-      <div class="tx-toggle" id="heroTxToggle">
-        <button type="button" class="tx-toggle__btn is-active" data-type="deposit">💰 Dépôt</button>
-        <button type="button" class="tx-toggle__btn" data-type="withdrawal">🧾 Retrait</button>
-      </div>
-      <input class="hero-form__amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Montant en €" id="heroTxAmount" required>
-      <input class="hero-form__note" type="text" maxlength="80" placeholder="Motif (optionnel)" id="heroTxNote">
-      <p class="tx-form__hint" id="heroTxHint">Un retrait doit être justifié : le motif indique pourquoi cet argent quitte la cagnotte pour retourner sur le compte courant.</p>
-      <button type="submit" class="hero-form__submit" id="heroTxSubmit">Ajouter le dépôt</button>
-    </form>
+    <div class="hero-panel__action">
+      <form class="hero-form" id="heroTxForm">
+        <div class="tx-toggle" id="heroTxToggle">
+          <button type="button" class="tx-toggle__btn is-active" data-type="deposit">💰 Dépôt</button>
+          <button type="button" class="tx-toggle__btn" data-type="withdrawal">🧾 Retrait</button>
+        </div>
+        <input class="hero-form__amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Montant en €" id="heroTxAmount" required>
+        <input class="hero-form__note" type="text" maxlength="80" placeholder="Motif (optionnel)" id="heroTxNote">
+        <p class="tx-form__hint" id="heroDepositHint">Se répartit automatiquement : complète d'abord "Voyage 1 mois" (jusqu'à son objectif), puis le reste part dans "PVT Japon".</p>
+        <p class="tx-form__hint" id="heroTxHint">Un retrait doit être justifié : le motif indique pourquoi cet argent quitte la cagnotte (sélectionnée ci-dessus) pour retourner sur le compte courant.</p>
+        <button type="submit" class="hero-form__submit" id="heroTxSubmit">Ajouter le dépôt</button>
+      </form>
+    </div>
 
     <div class="tx-list hero-history" id="heroTxList" aria-label="Historique des mouvements">
       <p class="tx-list__empty" id="heroTxEmpty">Aucun mouvement pour le moment. Ajoute ton premier dépôt !</p>

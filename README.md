@@ -24,7 +24,7 @@ Aucune installation nécessaire : c'est du HTML/CSS/JS pur, sans dépendance.
 - **Deux cagnottes indépendantes**, éditables (nom, montant cible, date
   d'échéance) :
   - ✈️ *Voyage 1 mois* — 5 000 € par défaut, du 8 mai au 7 juin 2027.
-  - 🇯🇵 *PVT Japon* — 10 000 € par défaut, échéance 01/11/2027 (départ en PVT).
+  - 🗾 *PVT Japon* — 10 000 € par défaut, échéance 01/11/2027 (départ en PVT).
 - **Barre de progression** par objectif, avec pourcentage, statut
   (en avance / dans les temps / en retard / échéance dépassée / atteint) basé
   sur une projection linéaire entre la date de départ et l'échéance.
