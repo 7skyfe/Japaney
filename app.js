@@ -387,16 +387,16 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   const particles = Array.from({ length: count }, () => ({
     x: window.innerWidth / 2 + (Math.random() - 0.5) * window.innerWidth * 0.7 * spread,
     y: -20 - Math.random() * 120,
-    vx: (Math.random() - 0.5) * 6,
-    vy: 2 + Math.random() * 4,
+    vx: (Math.random() - 0.5) * 5,
+    vy: 1 + Math.random() * 2,
     size: 5 + Math.random() * 6,
     rotation: Math.random() * 360,
-    vr: (Math.random() - 0.5) * 12,
+    vr: (Math.random() - 0.5) * 10,
     color: colors[Math.floor(Math.random() * colors.length)],
   }));
 
   let frame = 0;
-  const maxFrames = 230;
+  const maxFrames = 480;
   const h = window.innerHeight;
 
   (function tick() {
@@ -405,7 +405,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
     particles.forEach((p) => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.06;
+      p.vy += 0.025;
       p.rotation += p.vr;
       ctx.save();
       ctx.translate(p.x, p.y);
@@ -422,8 +422,6 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   })();
 }
 
-let celebrationTimer = null;
-
 function showCelebration({ emoji, title, body, big }) {
   document.getElementById("celebrationEmoji").textContent = emoji;
   document.getElementById("celebrationTitle").textContent = title;
@@ -431,15 +429,13 @@ function showCelebration({ emoji, title, body, big }) {
 
   const overlay = document.getElementById("celebrationOverlay");
   overlay.hidden = false;
-  launchConfetti(document.getElementById("confettiCanvas"), big ? { count: 220, spread: 1.3 } : { count: 90, spread: 0.8 });
-
-  clearTimeout(celebrationTimer);
-  celebrationTimer = setTimeout(closeCelebration, big ? 6000 : 4500);
+  // Pas de fermeture automatique : on reste tant que la croix (ou le fond)
+  // n'est pas cliquée, le temps de profiter des confettis.
+  launchConfetti(document.getElementById("confettiCanvas"), big ? { count: 320, spread: 1.3 } : { count: 160, spread: 0.8 });
 }
 
 function closeCelebration() {
   document.getElementById("celebrationOverlay").hidden = true;
-  clearTimeout(celebrationTimer);
 }
 
 function wireCelebration() {
