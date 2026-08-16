@@ -174,7 +174,9 @@ const template = document.getElementById("goalCardTemplate");
 const cardEls = {}; // { japan: <article>, other: <article> }
 
 function buildCards() {
-  Object.keys(state.goals).forEach((key) => {
+  // Ordre d'affichage volontaire (pas l'ordre des clés) : "Voyage 1 mois"
+  // d'abord -- en haut sur mobile, à gauche sur desktop -- puis "PVT Japon".
+  ["other", "japan"].forEach((key) => {
     const node = template.content.firstElementChild.cloneNode(true);
     node.dataset.goal = key;
     goalsWrapper.appendChild(node);

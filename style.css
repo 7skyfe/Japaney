@@ -841,6 +841,7 @@ main {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  z-index: 2;
 }
 
 .celebration-card {
@@ -899,7 +900,9 @@ main {
 
 /* ---------- Desktop / large screens ---------- */
 @media (min-width: 820px) {
-  main { padding: 22px 24px 0; }
+  /* Fluide plutôt que par paliers fixes : occupe presque tout l'écran sur
+     un grand moniteur, marges fines, jamais plus large que 1900px. */
+  main { max-width: min(1900px, 97vw); padding: 22px 18px 0; }
 
   .hero-panel {
     padding: 26px 28px;
@@ -927,11 +930,6 @@ main {
   .goal-card__current { font-size: 2.3rem; }
 }
 
-@media (min-width: 1100px) {
-  main { max-width: 1200px; }
-}
-
 @media (min-width: 1500px) {
-  main { max-width: 1500px; }
   .hero-panel { grid-template-columns: 340px 1fr; }
 }
