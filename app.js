@@ -489,7 +489,7 @@ function maybeCelebrateDeposit(amount, before) {
     const amountJpy = amount * state.rate.value;
     const equivalent = pickEquivalent(amountJpy);
     const equivLine = equivalent
-      ? ` Ça équivaut à ${equivalent.count} ${equivalent.emoji} ${equivalent.label} au Japon !`
+      ? ` Ça équivaut à ${equivalent.count} ${equivalent.label} au Japon ! ${equivalent.emoji}`
       : "";
     showCelebration({
       emoji: "🎉",
