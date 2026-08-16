@@ -212,6 +212,13 @@ main {
   color: var(--accent-ink);
 }
 
+.goal-tabs__caption {
+  font-size: .7rem;
+  color: var(--text-dim);
+  line-height: 1.35;
+  margin: 8px 0 0;
+}
+
 .hero-form {
   display: flex;
   flex-direction: column;
@@ -272,16 +279,21 @@ main {
 }
 
 .goal-card {
-  display: none;
+  /* Toujours visible (mobile et desktop) : un dépôt se répartit
+     automatiquement entre les deux cagnottes, donc masquer l'une d'elles
+     selon l'onglet actif cacherait de l'argent qui vient d'y être ajouté. */
+  display: block;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: var(--shadow);
   margin-bottom: 16px;
 }
 
-.goal-card.is-active { display: block; }
+/* L'onglet actif ne fait plus que mettre en évidence la cagnotte ciblée par
+   un retrait / affichée dans l'historique du panneau central. */
+.goal-card.is-active { border-color: var(--accent); }
 
 .goal-card__head {
   display: flex;
@@ -663,6 +675,8 @@ main {
 .flight-form__airline,
 .flight-form__link,
 .flight-form__submit {
+  width: 100%;
+  min-width: 0;
   border: 1px solid var(--border);
   background: var(--surface-alt);
   color: var(--text);
@@ -791,7 +805,6 @@ main {
   }
 
   .goal-card {
-    display: block !important;
     margin-bottom: 0;
   }
 

@@ -301,7 +301,7 @@ function renderSummary() {
 function renderTabs() {
   document.querySelectorAll(".goal-tabs__btn").forEach((btn) => {
     btn.classList.toggle("is-active", btn.dataset.goal === state.activeTab);
-    btn.setAttribute("aria-selected", btn.dataset.goal === state.activeTab ? "true" : "false");
+    btn.setAttribute("aria-pressed", btn.dataset.goal === state.activeTab ? "true" : "false");
   });
   Object.entries(cardEls).forEach(([key, node]) => {
     node.classList.toggle("is-active", key === state.activeTab);
