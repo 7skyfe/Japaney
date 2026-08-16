@@ -794,6 +794,20 @@ main {
   line-height: 1.4;
 }
 
+.app-footer__reset {
+  display: inline-block;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.app-footer__reset:hover { border-color: var(--bad); color: var(--bad); }
+
 /* ---------- Célébrations (dépôt notable / objectif atteint) ---------- */
 .celebration-overlay {
   position: fixed;

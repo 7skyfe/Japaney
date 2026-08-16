@@ -764,3 +764,12 @@ document.getElementById("goalTabs").addEventListener("click", (e) => {
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") refreshRate();
 });
+
+document.getElementById("resetAllBtn").addEventListener("click", () => {
+  const ok = confirm(
+    "Réinitialiser toutes les données (montants épargnés, historiques, prix de vols) sur cet appareil ?\n\nCette action est irréversible."
+  );
+  if (!ok) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+});
