@@ -55,6 +55,7 @@
         </div>
         <input class="hero-form__amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="Montant en €" id="heroTxAmount" required>
         <input class="hero-form__note" type="text" maxlength="80" placeholder="Motif (optionnel)" id="heroTxNote">
+        <p class="hero-form__error" id="heroTxError" hidden>⚠️ Merci de justifier ce retrait (motif obligatoire).</p>
         <p class="tx-form__hint" id="heroDepositHint">Se répartit automatiquement : complète d'abord "Voyage 1 mois" (jusqu'à son objectif), puis le reste part dans "PVT Japon".</p>
         <p class="tx-form__hint" id="heroTxHint">Un retrait doit être justifié : le motif indique pourquoi cet argent quitte la cagnotte (sélectionnée ci-dessus) pour retourner sur le compte courant.</p>
         <button type="submit" class="hero-form__submit" id="heroTxSubmit">Ajouter le dépôt</button>
@@ -164,6 +165,16 @@
 <footer class="app-footer">
   <p>Taux EUR/JPY mis à jour automatiquement (source : Frankfurter API) — les données restent uniquement sur cet appareil.</p>
 </footer>
+
+<div class="celebration-overlay" id="celebrationOverlay" hidden>
+  <canvas class="celebration-canvas" id="confettiCanvas"></canvas>
+  <div class="celebration-card" role="alertdialog" aria-live="polite">
+    <div class="celebration-card__emoji" id="celebrationEmoji">🎉</div>
+    <h2 class="celebration-card__title" id="celebrationTitle">Bravo !</h2>
+    <p class="celebration-card__body" id="celebrationBody"></p>
+    <button type="button" class="celebration-card__close" id="celebrationClose">Continuer</button>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>

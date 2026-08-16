@@ -264,6 +264,19 @@ main {
 }
 .hero-form__submit.is-withdrawal { background: var(--bad); }
 
+.hero-form__error {
+  display: none;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bad) 40%, transparent);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin: -2px 0 0;
+}
+.hero-form__error.is-shown { display: block; }
+
 #heroTxHint { display: none; }
 
 .hero-history {
@@ -779,6 +792,81 @@ main {
   color: var(--text-dim);
   text-align: center;
   line-height: 1.4;
+}
+
+/* ---------- Célébrations (dépôt notable / objectif atteint) ---------- */
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 14, .5);
+  padding: 20px;
+}
+.celebration-overlay[hidden] { display: none; }
+
+.celebration-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.celebration-card {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px 26px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 64px -20px rgba(0, 0, 0, .5);
+  animation: celebration-pop .35s cubic-bezier(.34, 1.56, .64, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .celebration-card { animation: none; }
+}
+
+@keyframes celebration-pop {
+  from { transform: scale(.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.celebration-card__emoji {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.celebration-card__title {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.celebration-card__body {
+  margin: 0 0 22px;
+  color: var(--text-dim);
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.celebration-card__close {
+  border: none;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 800;
+  font-size: .95rem;
+  padding: 12px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 44px;
 }
 
 /* ---------- Desktop / large screens ---------- */

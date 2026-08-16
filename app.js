@@ -335,6 +335,151 @@ function distributeDeposit(amount, note) {
   }
 }
 
+/* ------------------------------ Célébrations ----------------------------- */
+// Petits repères de prix au Japon (¥, ordre de grandeur réaliste) pour donner
+// une image concrète à un dépôt, façon "ça équivaut à...".
+const JAPAN_EQUIVALENTS = [
+  { label: "onigiri au konbini", jpy: 150, emoji: "🍙" },
+  { label: "cannettes de thé glacé", jpy: 150, emoji: "🥤" },
+  { label: "plats de sushi au kaiten-zushi", jpy: 160, emoji: "🍣" },
+  { label: "trajets en métro à Tokyo", jpy: 220, emoji: "🚇" },
+  { label: "capsules gachapon", jpy: 400, emoji: "🎁" },
+  { label: "mangas neufs", jpy: 600, emoji: "📚" },
+  { label: "parties de purikura", jpy: 500, emoji: "📸" },
+  { label: "bols de ramen à Tokyo", jpy: 900, emoji: "🍜" },
+  { label: "entrées d'onsen", jpy: 700, emoji: "♨️" },
+  { label: "locations de kimono pour la journée", jpy: 5000, emoji: "👘" },
+  { label: "nuits en capsule hôtel", jpy: 3500, emoji: "🛏️" },
+  { label: "jeux Nintendo Switch", jpy: 7000, emoji: "🎮" },
+  { label: "figurines Nendoroid", jpy: 6000, emoji: "🎎" },
+  { label: "billets de shinkansen Tokyo → Kyoto", jpy: 14000, emoji: "🚄" },
+  { label: "couteaux de maître sushi (Yanagiba)", jpy: 25000, emoji: "🔪" },
+];
+
+function pickEquivalent(amountJpy) {
+  const candidates = JAPAN_EQUIVALENTS.map((item) => ({
+    ...item,
+    count: Math.floor(amountJpy / item.jpy),
+  })).filter((item) => item.count >= 1);
+  if (candidates.length === 0) return null;
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const colors = ["#c0132e", "#2563eb", "#1a8a4a", "#e0a834", "#ffffff"];
+  const particles = Array.from({ length: count }, () => ({
+    x: window.innerWidth / 2 + (Math.random() - 0.5) * window.innerWidth * 0.7 * spread,
+    y: -20 - Math.random() * 120,
+    vx: (Math.random() - 0.5) * 6,
+    vy: 2 + Math.random() * 4,
+    size: 5 + Math.random() * 6,
+    rotation: Math.random() * 360,
+    vr: (Math.random() - 0.5) * 12,
+    color: colors[Math.floor(Math.random() * colors.length)],
+  }));
+
+  let frame = 0;
+  const maxFrames = 230;
+  const h = window.innerHeight;
+
+  (function tick() {
+    frame++;
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    particles.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.06;
+      p.rotation += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.restore();
+    });
+    if (frame < maxFrames && particles.some((p) => p.y < h + 40)) {
+      requestAnimationFrame(tick);
+    } else {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    }
+  })();
+}
+
+let celebrationTimer = null;
+
+function showCelebration({ emoji, title, body, big }) {
+  document.getElementById("celebrationEmoji").textContent = emoji;
+  document.getElementById("celebrationTitle").textContent = title;
+  document.getElementById("celebrationBody").textContent = body;
+
+  const overlay = document.getElementById("celebrationOverlay");
+  overlay.hidden = false;
+  launchConfetti(document.getElementById("confettiCanvas"), big ? { count: 220, spread: 1.3 } : { count: 90, spread: 0.8 });
+
+  clearTimeout(celebrationTimer);
+  celebrationTimer = setTimeout(closeCelebration, big ? 6000 : 4500);
+}
+
+function closeCelebration() {
+  document.getElementById("celebrationOverlay").hidden = true;
+  clearTimeout(celebrationTimer);
+}
+
+function wireCelebration() {
+  document.getElementById("celebrationClose").addEventListener("click", closeCelebration);
+  document.getElementById("celebrationOverlay").addEventListener("click", (e) => {
+    if (e.target.id === "celebrationOverlay") closeCelebration();
+  });
+}
+
+/** Déclenche une célébration adaptée après un dépôt : fête maximale si un
+ * objectif vient tout juste d'être atteint, sinon un petit clin d'œil dès
+ * 100 € déposés. */
+function maybeCelebrateDeposit(amount, before) {
+  const after = { other: goalBalance(state.goals.other), japan: goalBalance(state.goals.japan) };
+  const justCompleted = ["other", "japan"].filter(
+    (key) => before[key] < state.goals[key].target && after[key] >= state.goals[key].target
+  );
+
+  if (justCompleted.length > 0) {
+    const names = justCompleted.map((key) => state.goals[key].label).join(" et ");
+    showCelebration({
+      emoji: "🏆",
+      title: "Objectif atteint !",
+      body:
+        justCompleted.length > 1
+          ? `${names} sont maintenant complets. Direction le Japon ! 🎉`
+          : `${names} est maintenant complet — direction le Japon ! 🎉`,
+      big: true,
+    });
+    return;
+  }
+
+  if (amount >= 100) {
+    const amountJpy = amount * state.rate.value;
+    const equivalent = pickEquivalent(amountJpy);
+    const equivLine = equivalent
+      ? ` Ça équivaut à ${equivalent.count} ${equivalent.emoji} ${equivalent.label} au Japon !`
+      : "";
+    showCelebration({
+      emoji: "🎉",
+      title: "Bravo !",
+      body: `Tu viens de mettre ${eurFmt.format(amount)} de côté (≈ ${jpyFmt.format(Math.round(amountJpy))}).${equivLine}`,
+      big: false,
+    });
+  }
+}
+
 function wireHeroForm() {
   const toggle = document.getElementById("heroTxToggle");
   const form = document.getElementById("heroTxForm");
@@ -343,7 +488,10 @@ function wireHeroForm() {
   const submitBtn = document.getElementById("heroTxSubmit");
   const depositHint = document.getElementById("heroDepositHint");
   const withdrawalHint = document.getElementById("heroTxHint");
+  const errorEl = document.getElementById("heroTxError");
   const list = document.getElementById("heroTxList");
+
+  const clearError = () => errorEl.classList.remove("is-shown");
 
   toggle.addEventListener("click", (e) => {
     const btn = e.target.closest(".tx-toggle__btn");
@@ -358,11 +506,15 @@ function wireHeroForm() {
       : "Motif (optionnel)";
     depositHint.style.display = isWithdrawal ? "none" : "block";
     withdrawalHint.style.display = isWithdrawal ? "block" : "none";
+    clearError();
   });
 
   // La validité personnalisée doit être effacée pendant la saisie, sinon le
   // navigateur bloque le prochain "submit" avant même que notre handler ne s'exécute.
-  noteInput.addEventListener("input", () => noteInput.setCustomValidity(""));
+  noteInput.addEventListener("input", () => {
+    noteInput.setCustomValidity("");
+    clearError();
+  });
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -372,12 +524,16 @@ function wireHeroForm() {
 
     if (heroTxType === "withdrawal") {
       if (!note) {
+        // Double signal : bulle native du navigateur + message inline visible
+        // (la bulle native peut passer inaperçue sur certains mobiles).
         noteInput.focus();
         noteInput.setCustomValidity("Merci de justifier ce retrait (motif obligatoire).");
         noteInput.reportValidity();
+        errorEl.classList.add("is-shown");
         return;
       }
       noteInput.setCustomValidity("");
+      clearError();
       state.goals[state.activeTab].transactions.unshift({
         id: newTxId(),
         date: todayISO(),
@@ -385,14 +541,19 @@ function wireHeroForm() {
         amount,
         note,
       });
+      saveState();
+      amountInput.value = "";
+      noteInput.value = "";
+      render();
     } else {
+      const before = { other: goalBalance(state.goals.other), japan: goalBalance(state.goals.japan) };
       distributeDeposit(amount, note);
+      saveState();
+      amountInput.value = "";
+      noteInput.value = "";
+      render();
+      maybeCelebrateDeposit(amount, before);
     }
-
-    saveState();
-    amountInput.value = "";
-    noteInput.value = "";
-    render();
   });
 
   list.addEventListener("click", (e) => {
@@ -585,6 +746,7 @@ function render() {
 
 buildCards();
 wireHeroForm();
+wireCelebration();
 wireFlightTracker();
 render();
 refreshRate();
