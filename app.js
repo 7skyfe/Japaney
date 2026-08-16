@@ -414,12 +414,22 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   const density = Math.min(2.2, Math.max(1, (window.innerWidth * window.innerHeight) / referenceArea));
   const scaledCount = Math.min(600, Math.round(count * density * spread));
 
+  // Physique différente par plateforme : la vitesse "d'origine" (plus rapide)
+  // était parfaite sur iPhone selon les retours, on la garde intacte là ;
+  // seule la version PC a été ralentie suite aux retours suivants. Le seuil
+  // 820px est le même que celui utilisé partout ailleurs pour distinguer
+  // mobile / desktop.
+  const isMobile = window.innerWidth < 820;
+  const physics = isMobile
+    ? { vx: 5, vyMin: 1, vyRange: 2, gravity: 0.025, maxFrames: 480 }
+    : { vx: 3.5, vyMin: 0.3, vyRange: 0.6, gravity: 0.01, maxFrames: 750 };
+
   const colors = ["#c0132e", "#2563eb", "#1a8a4a", "#e0a834", "#ffffff"];
   const particles = Array.from({ length: scaledCount }, () => ({
     x: Math.random() * window.innerWidth,
     y: -20 - Math.random() * 120,
-    vx: (Math.random() - 0.5) * 3.5,
-    vy: 0.3 + Math.random() * 0.6,
+    vx: (Math.random() - 0.5) * physics.vx,
+    vy: physics.vyMin + Math.random() * physics.vyRange,
     size: 5 + Math.random() * 6,
     rotation: Math.random() * 360,
     vr: (Math.random() - 0.5) * 10,
@@ -427,7 +437,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   }));
 
   let frame = 0;
-  const maxFrames = 750;
+  const maxFrames = physics.maxFrames;
   const h = window.innerHeight;
 
   (function tick() {
@@ -436,7 +446,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
     particles.forEach((p) => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.01;
+      p.vy += physics.gravity;
       p.rotation += p.vr;
       ctx.save();
       ctx.translate(p.x, p.y);
