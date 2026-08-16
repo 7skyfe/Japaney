@@ -55,7 +55,10 @@ function normalizeState(parsed) {
       other: { ...base.goals.other, ...(parsed.goals && parsed.goals.other) },
     },
     rate: { ...base.rate, ...parsed.rate },
-    activeTab: parsed.activeTab === "japan" ? "japan" : "other",
+    // Toujours "other" ("1 mois") au chargement, même si un autre onglet
+    // était actif à la dernière visite -- l'app ne doit pas se souvenir du
+    // dernier onglet choisi, elle doit systématiquement rouvrir sur celui-là.
+    activeTab: "other",
     flights: {
       ...base.flights,
       ...(parsed.flights || {}),
