@@ -415,8 +415,8 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   const particles = Array.from({ length: scaledCount }, () => ({
     x: Math.random() * window.innerWidth,
     y: -20 - Math.random() * 120,
-    vx: (Math.random() - 0.5) * 4,
-    vy: 0.5 + Math.random() * 1,
+    vx: (Math.random() - 0.5) * 3.5,
+    vy: 0.3 + Math.random() * 0.6,
     size: 5 + Math.random() * 6,
     rotation: Math.random() * 360,
     vr: (Math.random() - 0.5) * 10,
@@ -424,7 +424,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   }));
 
   let frame = 0;
-  const maxFrames = 620;
+  const maxFrames = 750;
   const h = window.innerHeight;
 
   (function tick() {
@@ -433,7 +433,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
     particles.forEach((p) => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.015;
+      p.vy += 0.01;
       p.rotation += p.vr;
       ctx.save();
       ctx.translate(p.x, p.y);
@@ -833,6 +833,15 @@ async function initSync() {
     fbAuth = authMod.getAuth(app);
     fbDb = fsMod.getFirestore(app);
     fbDocFns = { doc: fsMod.doc, getDoc: fsMod.getDoc, setDoc: fsMod.setDoc, onSnapshot: fsMod.onSnapshot };
+
+    // Session la plus durable possible (IndexedDB). C'est déjà le
+    // comportement par défaut, mais on le fixe explicitement plutôt que de
+    // compter sur un défaut du SDK qui pourrait changer.
+    try {
+      await authMod.setPersistence(fbAuth, authMod.browserLocalPersistence);
+    } catch (e) {
+      console.warn("Persistance de session non disponible :", e);
+    }
 
     authMod.onAuthStateChanged(fbAuth, (user) => onAuthChanged(user, authMod));
 
