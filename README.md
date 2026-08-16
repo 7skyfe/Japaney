@@ -192,6 +192,45 @@ Firestore). Tant que `firebaseConfig` n'est pas rempli, ce bouton indique
 juste que la synchro n'est pas configurée — le reste de l'appli continue de
 fonctionner normalement en local.
 
+## Sources des prix des équivalences
+
+Les repères de prix utilisés par les célébrations (`JAPAN_EQUIVALENTS` dans
+`app.js`) sont vérifiés par recherche, pas estimés à vue de nez. Fourchettes
+généralement larges dans la réalité (ex: un onsen peut coûter de 200 à
+2000¥) — l'appli retient une valeur représentative unique, expliquée
+ci-dessous avec sa source :
+
+| Repère | Valeur retenue | Fourchette réelle constatée | Source |
+|---|---|---|---|
+| Café en canette | 120¥ | 90–130¥ | [Honest Coffee Guide](https://honestcoffeeguide.com/japanese-vending-machine-coffee/) |
+| Bouteille d'eau (konbini) | 130¥ | 100–150¥ | [Water Bottle Prices in Japan 2026](https://latestcost.com/water-bottle-prices-japan-practical-cost/) |
+| Onigiri (konbini) | 150¥ | 120–160¥ | [konbiniDB](https://konbinidb.com/en/news/7-eleven/109822/) |
+| Plat de sushi (kaiten-zushi) | 160¥ | 100–700¥ (150¥ chez Sushiro en zone urbaine) | [Japansoso, guide 2026](https://japansoso.com/en/article/kaiten-sushi-guide-2026) |
+| Ticket de métro à Tokyo | 200¥ | 180–330¥ selon la distance | [Tokyo Metro, tarifs officiels](https://www.tokyometro.jp/en/ticket/regular/index.html) |
+| Ticket de bus urbain | 220¥ | tarif plat comparable au métro | estimation alignée sur le tarif métro |
+| Gachapon | 300¥ | 200–500¥ (300¥ un prix courant) | [MATCHA, guide gachapon](https://matcha-jp.com/en/7447) |
+| Purikura | 500¥ | 300–800¥ | [tsunagu Japan](https://www.tsunagujapan.com/10-facts-you-probably-didnt-know-about-purikura/) |
+| Entrée sanctuaire/temple | 500¥ | souvent gratuit (sanctuaires) à 600¥ (temples) | [Kinkaku-ji, tarifs officiels](https://kinkakujitemple.com/entrance-fee/) |
+| Manga (tankōbon) | 500¥ | 400–800¥ | [Japan Dev](https://japan-dev.com/blog/how-much-does-manga-cost-in-japan) |
+| Sento (bain public, Tokyo) | 550¥ | tarif unique officiel depuis août 2024 | [SoraNews24, 2026](https://soranews24.com/2026/07/30/maximum-entry-fee-for-sento-public-baths-in-tokyo-increases-slightly-for-adults-next-month/) |
+| Onsen (entrée) | 700¥ | 400–2000¥ | [City-Cost](https://www.city-cost.com/blogs/City-Cost/G6qDz-living_medical_gumma_nagano_gifu_gero-shi_ehime_matsuyama-shi) |
+| Pass métro 1 jour (Tokyo) | 700¥ | tarif officiel depuis mars 2025 | [Tokyo Metro](https://www.tokyometro.jp/en/ticket/travel/index.html) |
+| Bol de ramen à Tokyo | 850¥ | 610¥ (moyenne officielle) à 1200¥ (garni) | [Japan Trip Navi, guide 2026](https://kanko-map.com/en/tokyo-ramen-price-compare/) |
+| Place de cinéma | 2000¥ | 2000–2200¥ | [THIS IS JAPAN](https://thisis-japan.com/japans-movie-ticket-prices-soar-to-2200-yen-exploring-cinema-trends-and-costs-in-2025/) |
+| Location yukata (journée) | 3000¥ | 2000–5000¥ | [kanpai-japan](https://www.kanpai-japan.com/japan-travel-guide/buying-renting-kimono-yukata) |
+| Nuit en capsule hôtel | 3500¥ | 2500–5000¥ | [Tourism Attractions, guide 2026](https://tourismattractions.net/japan/tokyo-capsule-hotels-guide) |
+| Location kimono (journée) | 5000¥ | 2000–10000¥ | [Waplus Kimono, Kyoto](https://waplus-kimono.com/kyoto/en/info/kyoto_kimono_rental_oyakudachi193/) |
+| Figurine Nendoroid | 6000¥ | 5000–8000¥ | [JapanNook, guide 2026](https://japannook.com/en/articles/japan-figure-collector-guide) |
+| Jeu Nintendo Switch | 7500¥ | 6000–9980¥ | [NintendoSoup](https://nintendosoup.com/guide-where-to-buy-nintendo-switch-2-games-in-japan/) |
+| Entrée 1 jour Super Nintendo World (USJ) | 8900¥ | 8200–10900¥ | [TDR Explorer](https://tdrexplorer.com/universal-studios-japan-tickets/) |
+| Entrée 1 jour Tokyo Disneyland | 9400¥ | 7900–10900¥ | [TDR Explorer](https://tdrexplorer.com/tokyo-disneyland-tickets/) |
+| Nuit hôtel business (Tokyo) | 10000¥ | 8000–15000¥ | [selfguidejapan, guide 2026](https://selfguidejapan.com/blog/japan-hotel-prices-2026) |
+| Shinkansen Tokyo → Kyoto (Nozomi) | 14000¥ | ≈14170¥ réservé | [Tokyo Cheapo](https://tokyocheapo.com/travel/transport/how-much-does-it-cost-to-ride-the-shinkansen/) |
+| Repas kaiseki (Kyoto) | 15000¥ | 10000–30000¥ | [Inside Kyoto](https://www.insidekyoto.com/kaiseki-a-complete-guide-to-japans-haute-cuisine) |
+| Couteau de sushi (Yanagiba) | 25000¥ | 17500–33000¥ | [Japanese Food Craftsman](https://shop.japanese-food-craftsman.com/collections/yanagiba-knife) |
+| Vol intérieur Tokyo → Osaka (tarif standard) | 32000¥ | 29000–42000¥ (7700¥ avec le tarif visiteur étranger ANA/JAL) | [onemileatatime](https://onemileatatime.com/how-to-book-cheap-japan-domestic-flights/) |
+| Console Nintendo Switch 2 | 60000¥ | 59980¥ (version japonaise) / 69980¥ (multilingue) | [Nippon.com](https://www.nippon.com/en/news/yjj2026050800853/) |
+
 ## Structure
 
 ```

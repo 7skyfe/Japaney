@@ -347,37 +347,39 @@ function distributeDeposit(amount, note) {
 /* ------------------------------ Célébrations ----------------------------- */
 // Petits repères de prix au Japon (¥, ordre de grandeur réaliste) pour donner
 // une image concrète à un dépôt, façon "ça équivaut à...".
+// Prix vérifiés par recherche (sources citées dans le README), pas estimés
+// à vue de nez -- fourchettes larges ramenées à une valeur représentative.
 const JAPAN_EQUIVALENTS = [
-  { label: "bouteilles d'eau au konbini", jpy: 120, emoji: "💧" },
-  { label: "cafés en canette", jpy: 130, emoji: "☕" },
+  { label: "cafés en canette au distributeur", jpy: 120, emoji: "☕" },
+  { label: "bouteilles d'eau au konbini", jpy: 130, emoji: "💧" },
   { label: "onigiri au konbini", jpy: 150, emoji: "🍙" },
   { label: "cannettes de thé glacé", jpy: 150, emoji: "🥤" },
   { label: "plats de sushi au kaiten-zushi", jpy: 160, emoji: "🍣" },
   { label: "tickets de train JR (courte distance)", jpy: 200, emoji: "🚆" },
-  { label: "trajets en métro à Tokyo", jpy: 220, emoji: "🚇" },
-  { label: "tickets de bus urbain", jpy: 230, emoji: "🚌" },
-  { label: "capsules gachapon", jpy: 400, emoji: "🎁" },
+  { label: "trajets en métro à Tokyo", jpy: 200, emoji: "🚇" },
+  { label: "tickets de bus urbain", jpy: 220, emoji: "🚌" },
+  { label: "capsules gachapon", jpy: 300, emoji: "🎁" },
   { label: "parties de purikura", jpy: 500, emoji: "📸" },
   { label: "entrées de sanctuaire ou temple", jpy: 500, emoji: "⛩️" },
-  { label: "entrées de sento (bain public)", jpy: 500, emoji: "🛁" },
-  { label: "mangas neufs", jpy: 600, emoji: "📚" },
+  { label: "mangas neufs", jpy: 500, emoji: "📚" },
+  { label: "entrées de sento (bain public) à Tokyo", jpy: 550, emoji: "🛁" },
   { label: "entrées d'onsen", jpy: 700, emoji: "♨️" },
-  { label: "bols de ramen à Tokyo", jpy: 900, emoji: "🍜" },
-  { label: "pass 1 jour métro de Tokyo", jpy: 800, emoji: "🗼" },
-  { label: "places de cinéma", jpy: 1900, emoji: "🎬" },
+  { label: "pass 1 jour métro de Tokyo", jpy: 700, emoji: "🗼" },
+  { label: "bols de ramen à Tokyo", jpy: 850, emoji: "🍜" },
+  { label: "places de cinéma", jpy: 2000, emoji: "🎬" },
   { label: "locations de yukata pour la journée", jpy: 3000, emoji: "🎐" },
   { label: "nuits en capsule hôtel", jpy: 3500, emoji: "🛏️" },
   { label: "locations de kimono pour la journée", jpy: 5000, emoji: "👘" },
   { label: "figurines Nendoroid", jpy: 6000, emoji: "🎎" },
-  { label: "jeux Nintendo Switch", jpy: 7000, emoji: "🎮" },
+  { label: "jeux Nintendo Switch", jpy: 7500, emoji: "🎮" },
   { label: "entrées 1 jour à Super Nintendo World (USJ)", jpy: 8900, emoji: "🍄" },
   { label: "entrées 1 jour à Tokyo Disneyland", jpy: 9400, emoji: "🏰" },
   { label: "nuits en hôtel business correct", jpy: 10000, emoji: "🏨" },
   { label: "billets de shinkansen Tokyo → Kyoto", jpy: 14000, emoji: "🚄" },
-  { label: "vols intérieurs Tokyo → Osaka", jpy: 15000, emoji: "✈️" },
   { label: "repas kaiseki gastronomiques", jpy: 15000, emoji: "🍱" },
   { label: "couteaux de maître sushi (Yanagiba)", jpy: 25000, emoji: "🔪" },
-  { label: "consoles Nintendo Switch", jpy: 30000, emoji: "🕹️" },
+  { label: "vols intérieurs Tokyo → Osaka (tarif standard)", jpy: 32000, emoji: "✈️" },
+  { label: "consoles Nintendo Switch 2", jpy: 60000, emoji: "🕹️" },
 ];
 
 function pickEquivalent(amountJpy) {
