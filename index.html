@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1d4fc4">
+<meta name="theme-color" content="#c0132e">
 <title>Japaney — Épargne voyage</title>
 
 <!-- Icône d'onglet (navigateur desktop/mobile) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗾</text></svg>">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=2">
 
 <!-- Icône "Sur l'écran d'accueil" iOS : Safari ignore le favicon SVG pour
      ça, il lui faut une vraie image dédiée (sinon il génère une icône
-     générique avec juste l'initiale du site). -->
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+     générique avec juste l'initiale du site). Le "?v=2" force Safari à
+     retélécharger l'image : son cache d'icône d'écran d'accueil est
+     séparé du reste et résiste même à "Effacer les données". À
+     incrémenter si l'icône est changée à nouveau plus tard. -->
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png?v=2">
 <meta name="apple-mobile-web-app-title" content="Japaney">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
