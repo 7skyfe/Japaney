@@ -901,11 +901,27 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") refreshRate();
 });
 
-document.getElementById("resetAllBtn").addEventListener("click", () => {
+document.getElementById("resetAllBtn").addEventListener("click", async () => {
+  const synced = Boolean(fbUser);
   const ok = confirm(
-    "Réinitialiser toutes les données (montants épargnés, historiques, prix de vols) sur cet appareil ?\n\nCette action est irréversible."
+    (synced
+      ? "Réinitialiser toutes les données (montants épargnés, historiques, prix de vols) ?\n\nTu es connecté à la synchro : ça repartira à zéro sur TOUS tes appareils connectés."
+      : "Réinitialiser toutes les données (montants épargnés, historiques, prix de vols) sur cet appareil ?"
+    ) + "\n\nCette action est irréversible."
   );
   if (!ok) return;
+
   localStorage.removeItem(STORAGE_KEY);
+
+  // Sans ça, la copie cloud (non effacée) écraserait aussitôt le reset local
+  // au rechargement suivant.
+  if (synced && fbDocRef && fbDocFns) {
+    try {
+      await fbDocFns.setDoc(fbDocRef, defaultState());
+    } catch (e) {
+      console.warn("Réinitialisation cloud échouée :", e);
+    }
+  }
+
   location.reload();
 });
