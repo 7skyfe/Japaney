@@ -402,9 +402,18 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   canvas.style.height = window.innerHeight + "px";
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+  // Densité constante quelle que soit la taille d'écran : sur un grand
+  // moniteur, on veut autant de confettis par m² que sur un téléphone (où
+  // le rendu est déjà bon), pas le même nombre absolu étalé sur une bien
+  // plus grande surface -- et ils tombent sur toute la largeur de l'écran,
+  // pas juste autour du centre.
+  const referenceArea = 420 * 900;
+  const density = Math.min(2.2, Math.max(1, (window.innerWidth * window.innerHeight) / referenceArea));
+  const scaledCount = Math.min(600, Math.round(count * density * spread));
+
   const colors = ["#c0132e", "#2563eb", "#1a8a4a", "#e0a834", "#ffffff"];
-  const particles = Array.from({ length: count }, () => ({
-    x: window.innerWidth / 2 + (Math.random() - 0.5) * window.innerWidth * 0.7 * spread,
+  const particles = Array.from({ length: scaledCount }, () => ({
+    x: Math.random() * window.innerWidth,
     y: -20 - Math.random() * 120,
     vx: (Math.random() - 0.5) * 5,
     vy: 1 + Math.random() * 2,
