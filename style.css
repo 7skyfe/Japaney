@@ -82,6 +82,11 @@ h1 {
   justify-content: space-between;
   gap: 10px;
   padding: 14px 16px;
+  /* En app "Sur l'écran d'accueil" iOS, la barre de statut est transparente
+     (voir apple-mobile-web-app-status-bar-style) : le contenu passe donc
+     sous l'heure / Dynamic Island sans cette marge de sécurité. Vaut 0 dans
+     un onglet Safari normal, donc sans impact ailleurs. */
+  padding-top: calc(14px + env(safe-area-inset-top));
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);

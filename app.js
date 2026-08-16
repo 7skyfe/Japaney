@@ -30,7 +30,7 @@ function defaultState() {
       },
     },
     rate: { value: RATE_FALLBACK, date: null, fetchedAt: null, isLive: false },
-    activeTab: "japan",
+    activeTab: "other",
     flights: {
       origin: "Paris",
       originCode: "CDG",
@@ -55,7 +55,7 @@ function normalizeState(parsed) {
       other: { ...base.goals.other, ...(parsed.goals && parsed.goals.other) },
     },
     rate: { ...base.rate, ...parsed.rate },
-    activeTab: parsed.activeTab === "other" ? "other" : "japan",
+    activeTab: parsed.activeTab === "japan" ? "japan" : "other",
     flights: {
       ...base.flights,
       ...(parsed.flights || {}),
@@ -415,8 +415,8 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   const particles = Array.from({ length: scaledCount }, () => ({
     x: Math.random() * window.innerWidth,
     y: -20 - Math.random() * 120,
-    vx: (Math.random() - 0.5) * 5,
-    vy: 1 + Math.random() * 2,
+    vx: (Math.random() - 0.5) * 4,
+    vy: 0.5 + Math.random() * 1,
     size: 5 + Math.random() * 6,
     rotation: Math.random() * 360,
     vr: (Math.random() - 0.5) * 10,
@@ -424,7 +424,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
   }));
 
   let frame = 0;
-  const maxFrames = 480;
+  const maxFrames = 620;
   const h = window.innerHeight;
 
   (function tick() {
@@ -433,7 +433,7 @@ function launchConfetti(canvas, { count = 100, spread = 1 } = {}) {
     particles.forEach((p) => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.025;
+      p.vy += 0.015;
       p.rotation += p.vr;
       ctx.save();
       ctx.translate(p.x, p.y);
